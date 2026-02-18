@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock } from "lucide-react";
+import { ArrowLeft, Clock, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,8 +66,8 @@ const TimetableView = () => {
   if (!recipe) return null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+    <div className="min-h-screen bg-background steampunk-bg">
+      <header className="border-b border-brass/20 bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto flex items-center gap-4 px-4 py-5">
           <Button asChild variant="ghost" size="icon">
             <Link to="/">
@@ -75,15 +75,17 @@ const TimetableView = () => {
             </Link>
           </Button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">{recipe.name}</h1>
-            <p className="text-sm text-muted-foreground">Baking Timetable</p>
+            <h1 className="text-xl font-bold text-brass">{recipe.name}</h1>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <Cog className="h-3.5 w-3.5 text-neon" /> Baking Timetable
+            </p>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto max-w-2xl px-4 py-8">
         {/* Time Picker */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-brass/20 bg-card/70 backdrop-blur-sm">
           <CardContent className="flex flex-wrap items-end gap-4 p-4">
             <div>
               <Label className="text-xs text-muted-foreground">Bread ready date</Label>
@@ -125,7 +127,7 @@ const TimetableView = () => {
         ) : (
           <div className="relative space-y-0">
             {/* Vertical line */}
-            <div className="absolute left-[39px] top-4 bottom-4 w-0.5 bg-border" />
+            <div className="absolute left-[39px] top-4 bottom-4 w-0.5 bg-brass/30" />
 
             {timeline.map(({ step, startTime, endTime }, i) => (
               <div key={step.id} className="relative flex gap-4 pb-6">
@@ -137,10 +139,10 @@ const TimetableView = () => {
                 </div>
 
                 {/* Dot */}
-                <div className="relative z-10 mt-3.5 h-3 w-3 shrink-0 rounded-full border-2 border-primary bg-card" />
+                <div className="relative z-10 mt-3.5 h-3 w-3 shrink-0 rounded-full border-2 border-neon bg-card shadow-[0_0_6px_hsl(160_100%_45%/0.4)]" />
 
                 {/* Card */}
-                <Card className="flex-1">
+                <Card className="flex-1 border-brass/15 bg-card/70 backdrop-blur-sm">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between gap-2">
                       <div>
@@ -151,7 +153,7 @@ const TimetableView = () => {
                           </p>
                         )}
                       </div>
-                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-neon/10 border border-neon/20 px-2.5 py-1 text-xs font-medium text-neon">
                         <Clock className="h-3 w-3" />
                         {formatDuration(step.durationMinutes)}
                       </span>
@@ -164,13 +166,13 @@ const TimetableView = () => {
             {/* Ready marker */}
             <div className="relative flex gap-4">
               <div className="w-[80px] shrink-0 pt-3 text-right">
-                <span className="text-sm font-semibold text-primary">
+                <span className="text-sm font-semibold text-neon neon-glow">
                   {readyTime}
                 </span>
               </div>
-              <div className="relative z-10 mt-3.5 h-3 w-3 shrink-0 rounded-full bg-primary" />
+              <div className="relative z-10 mt-3.5 h-3 w-3 shrink-0 rounded-full bg-neon shadow-[0_0_8px_hsl(160_100%_45%/0.5)]" />
               <div className="pt-2.5">
-                <span className="font-semibold text-primary">🍞 Bread ready!</span>
+                <span className="font-semibold text-neon neon-glow">🍞 Bread ready!</span>
               </div>
             </div>
           </div>

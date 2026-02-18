@@ -115,8 +115,8 @@ const ImportRecipe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+    <div className="min-h-screen bg-background steampunk-bg">
+      <header className="border-b border-brass/20 bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto flex items-center gap-4 px-4 py-5">
           <Button asChild variant="ghost" size="icon">
             <Link to="/">
@@ -124,7 +124,7 @@ const ImportRecipe = () => {
             </Link>
           </Button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">Import Recipe</h1>
+            <h1 className="text-xl font-bold text-brass">Import Recipe</h1>
             <p className="text-sm text-muted-foreground">
               Paste recipe text and we'll parse it for you
             </p>
@@ -133,7 +133,7 @@ const ImportRecipe = () => {
       </header>
 
       <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8">
-        <Card>
+        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-base">Paste Recipe Text</CardTitle>
           </CardHeader>
@@ -150,7 +150,7 @@ const ImportRecipe = () => {
                 className="mt-2 font-mono text-sm"
               />
             </div>
-            <Button onClick={handleParse} className="w-full">
+            <Button onClick={handleParse} className="w-full bg-brass text-background hover:bg-brass/80 brass-glow">
               <Sparkles className="mr-2 h-4 w-4" />
               Parse Recipe
             </Button>
