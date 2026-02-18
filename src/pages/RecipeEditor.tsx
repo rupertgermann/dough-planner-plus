@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, GripVertical } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, GripVertical, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -82,59 +82,69 @@ const RecipeEditor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background steampunk-bg">
-      <header className="border-b border-brass/20 bg-card/80 backdrop-blur-sm">
-        <div className="container mx-auto flex items-center gap-4 px-4 py-5">
-          <Button asChild variant="ghost" size="icon">
+    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
+      <div className="fixed bottom-[-30px] right-[-30px] opacity-[0.03] pointer-events-none">
+        <Cog className="h-32 w-32 text-brass gear-slow" />
+      </div>
+
+      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl">
+        <div className="absolute inset-x-0 bottom-0 divider-glow" />
+        <div className="container mx-auto flex items-center gap-4 px-4 py-6">
+          <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10">
             <Link to="/">
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-brass">
+            <h1 className="text-xl font-bold text-gradient-brass">
               {isNew ? "New Recipe" : "Edit Recipe"}
             </h1>
           </div>
-          <Button onClick={handleSave} className="bg-brass text-background hover:bg-brass/80 brass-glow">Save Recipe</Button>
+          <Button onClick={handleSave} className="brass-shimmer text-primary-foreground font-semibold brass-glow hover:scale-105 transition-transform duration-300">
+            Save Recipe
+          </Button>
         </div>
       </header>
 
-      <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8">
+      <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8 relative z-10">
         {/* Basic Info */}
-        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
+        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
           <CardHeader>
-            <CardTitle className="text-base">Basic Info</CardTitle>
+            <CardTitle className="text-base text-gradient-brass">Basic Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="name">Recipe Name</Label>
+              <Label htmlFor="name" className="text-xs uppercase tracking-wider text-muted-foreground">Recipe Name</Label>
               <Input
                 id="name"
                 placeholder="e.g. Sourdough Boule"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                className="border-brass/20 bg-background/50 focus-visible:ring-neon/40"
               />
             </div>
             <div>
-              <Label htmlFor="desc">Description</Label>
+              <Label htmlFor="desc" className="text-xs uppercase tracking-wider text-muted-foreground">Description</Label>
               <Textarea
                 id="desc"
                 placeholder="A short description of the bread…"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={2}
+                className="border-brass/20 bg-background/50 focus-visible:ring-neon/40"
               />
             </div>
           </CardContent>
         </Card>
 
         {/* Ingredients */}
-        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
+        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Ingredients</CardTitle>
+            <CardTitle className="text-base text-gradient-brass">Ingredients</CardTitle>
             <Button
               variant="outline"
               size="sm"
+              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300"
               onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
             >
               <Plus className="mr-1 h-3.5 w-3.5" />
@@ -143,30 +153,30 @@ const RecipeEditor = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             {ingredients.map((ing, i) => (
-              <div key={ing.id} className="flex items-center gap-2">
-                <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground/40" />
+              <div key={ing.id} className="flex items-center gap-2 group">
+                <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground/30 group-hover:text-brass/50 transition-colors" />
                 <Input
-                  placeholder="Amount"
+                  placeholder="Amt"
                   value={ing.amount}
                   onChange={(e) => updateIngredient(i, "amount", e.target.value)}
-                  className="w-20"
+                  className="w-20 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                 />
                 <Input
                   placeholder="Unit"
                   value={ing.unit}
                   onChange={(e) => updateIngredient(i, "unit", e.target.value)}
-                  className="w-16"
+                  className="w-16 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                 />
                 <Input
                   placeholder="Ingredient name"
                   value={ing.name}
                   onChange={(e) => updateIngredient(i, "name", e.target.value)}
-                  className="flex-1"
+                  className="flex-1 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                 />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
                   onClick={() =>
                     setIngredients((prev) => prev.filter((_, j) => j !== i))
                   }
@@ -179,12 +189,13 @@ const RecipeEditor = () => {
         </Card>
 
         {/* Steps */}
-        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
+        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Baking Steps</CardTitle>
+            <CardTitle className="text-base text-gradient-brass">Baking Steps</CardTitle>
             <Button
               variant="outline"
               size="sm"
+              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300"
               onClick={() => setSteps((prev) => [...prev, emptyStep()])}
             >
               <Plus className="mr-1 h-3.5 w-3.5" />
@@ -195,9 +206,9 @@ const RecipeEditor = () => {
             {steps.map((step, i) => (
               <div
                 key={step.id}
-                className="flex gap-3 rounded-lg border bg-muted/30 p-3"
+                className="flex gap-3 rounded-lg border border-brass/10 bg-muted/20 p-4 backdrop-blur-sm card-hover"
               >
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neon/20 border border-neon/40 text-xs font-bold text-neon">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-xs font-bold text-neon neon-border">
                   {i + 1}
                 </div>
                 <div className="flex-1 space-y-2">
@@ -206,7 +217,7 @@ const RecipeEditor = () => {
                       placeholder="Step name (e.g. Bulk ferment)"
                       value={step.name}
                       onChange={(e) => updateStep(i, "name", e.target.value)}
-                      className="flex-1"
+                      className="flex-1 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                     />
                     <div className="flex items-center gap-1">
                       <Input
@@ -216,7 +227,7 @@ const RecipeEditor = () => {
                         onChange={(e) =>
                           updateStep(i, "durationMinutes", parseInt(e.target.value) || 0)
                         }
-                        className="w-20"
+                        className="w-20 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                       />
                       <span className="text-xs text-muted-foreground">min</span>
                     </div>
@@ -226,13 +237,13 @@ const RecipeEditor = () => {
                     value={step.instructions}
                     onChange={(e) => updateStep(i, "instructions", e.target.value)}
                     rows={2}
-                    className="text-sm"
+                    className="text-sm border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                   />
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
                   onClick={() => setSteps((prev) => prev.filter((_, j) => j !== i))}
                 >
                   <Trash2 className="h-3.5 w-3.5" />

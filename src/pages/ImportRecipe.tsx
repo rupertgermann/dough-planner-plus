@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -19,7 +19,6 @@ function parseRecipeText(text: string): { ingredients: Ingredient[]; steps: Baki
   for (const line of lines) {
     const lower = line.toLowerCase();
 
-    // Detect sections
     if (lower.includes("ingredient")) {
       section = "ingredients";
       continue;
@@ -35,7 +34,6 @@ function parseRecipeText(text: string): { ingredients: Ingredient[]; steps: Baki
     }
 
     if (section === "ingredients" || (section === "unknown" && /^\d/.test(line) && !lower.includes("min"))) {
-      // Try to parse "500g flour" or "2 cups water" patterns
       const match = line.match(/^([\d./½¼¾⅓⅔]+)\s*([a-zA-Z]{1,5})?\s+(.+)/);
       if (match) {
         ingredients.push({
@@ -53,7 +51,6 @@ function parseRecipeText(text: string): { ingredients: Ingredient[]; steps: Baki
         });
       }
     } else if (section === "steps") {
-      // Try to extract duration
       const durationMatch = line.match(/(\d+)\s*(min|minute|hour|hr|h)/i);
       let durationMinutes = 0;
       if (durationMatch) {
@@ -115,31 +112,36 @@ const ImportRecipe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background steampunk-bg">
-      <header className="border-b border-brass/20 bg-card/80 backdrop-blur-sm">
-        <div className="container mx-auto flex items-center gap-4 px-4 py-5">
-          <Button asChild variant="ghost" size="icon">
+    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
+      <div className="fixed top-[-40px] left-[-40px] opacity-[0.03] pointer-events-none">
+        <Cog className="h-36 w-36 text-neon gear-reverse" />
+      </div>
+
+      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl">
+        <div className="absolute inset-x-0 bottom-0 divider-glow" />
+        <div className="container mx-auto flex items-center gap-4 px-4 py-6">
+          <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10">
             <Link to="/">
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-brass">Import Recipe</h1>
-            <p className="text-sm text-muted-foreground">
-              Paste recipe text and we'll parse it for you
+            <h1 className="text-xl font-bold text-gradient-brass">Import Recipe</h1>
+            <p className="text-xs text-muted-foreground tracking-widest uppercase">
+              Paste text · Auto-parse · Save
             </p>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8">
-        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
+      <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8 relative z-10">
+        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
           <CardHeader>
-            <CardTitle className="text-base">Paste Recipe Text</CardTitle>
+            <CardTitle className="text-base text-gradient-brass">Paste Recipe Text</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-xs text-muted-foreground">
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider">
                 Tip: Include "Ingredients" and "Instructions" headers for best results
               </Label>
               <Textarea
@@ -147,10 +149,10 @@ const ImportRecipe = () => {
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 rows={12}
-                className="mt-2 font-mono text-sm"
+                className="mt-2 font-mono text-sm border-brass/15 bg-background/40 focus-visible:ring-neon/40"
               />
             </div>
-            <Button onClick={handleParse} className="w-full bg-brass text-background hover:bg-brass/80 brass-glow">
+            <Button onClick={handleParse} className="w-full brass-shimmer text-primary-foreground font-semibold brass-glow hover:scale-[1.02] transition-transform duration-300">
               <Sparkles className="mr-2 h-4 w-4" />
               Parse Recipe
             </Button>
@@ -159,17 +161,18 @@ const ImportRecipe = () => {
 
         {parsed && (
           <>
-            <Card>
+            <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base">
+                <CardTitle className="text-base text-gradient-brass">
                   Parsed Ingredients ({parsed.ingredients.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-1 text-sm">
+                <ul className="space-y-2 text-sm">
                   {parsed.ingredients.map((ing) => (
-                    <li key={ing.id} className="text-muted-foreground">
-                      <span className="font-medium text-foreground">
+                    <li key={ing.id} className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-1.5 w-1.5 rounded-full bg-brass/60" />
+                      <span className="font-medium text-foreground font-mono">
                         {ing.amount} {ing.unit}
                       </span>{" "}
                       {ing.name}
@@ -179,23 +182,23 @@ const ImportRecipe = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-base">
+                <CardTitle className="text-base text-gradient-brass">
                   Parsed Steps ({parsed.steps.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ol className="space-y-2 text-sm">
+                <ol className="space-y-3 text-sm">
                   {parsed.steps.map((step, i) => (
-                    <li key={step.id} className="flex gap-2">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                    <li key={step.id} className="flex gap-3">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-[10px] font-bold text-neon">
                         {i + 1}
                       </span>
                       <div>
                         <span className="text-foreground">{step.instructions}</span>
                         {step.durationMinutes > 0 && (
-                          <span className="ml-2 text-xs text-muted-foreground">
+                          <span className="ml-2 text-xs text-neon font-medium">
                             ({step.durationMinutes} min)
                           </span>
                         )}
@@ -206,7 +209,7 @@ const ImportRecipe = () => {
               </CardContent>
             </Card>
 
-            <Button onClick={handleSave} className="w-full" size="lg">
+            <Button onClick={handleSave} size="lg" className="w-full brass-shimmer text-primary-foreground font-semibold brass-glow hover:scale-[1.02] transition-transform duration-300">
               Save & Edit Recipe
             </Button>
           </>
