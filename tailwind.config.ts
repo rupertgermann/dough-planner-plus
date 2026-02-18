@@ -58,8 +58,11 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         neon: "hsl(var(--neon))",
+        "neon-cyan": "hsl(var(--neon-cyan))",
         brass: "hsl(var(--brass))",
         copper: "hsl(var(--copper))",
+        ember: "hsl(var(--ember))",
+        "violet-glow": "hsl(var(--violet-glow))",
       },
       borderRadius: {
         lg: "var(--radius)",

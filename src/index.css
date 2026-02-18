@@ -6,48 +6,51 @@
 
 @layer base {
   :root {
-    --background: 220 15% 8%;
-    --foreground: 40 20% 88%;
+    --background: 228 18% 6%;
+    --foreground: 42 25% 90%;
 
-    --card: 220 12% 12%;
-    --card-foreground: 40 20% 88%;
+    --card: 225 15% 10%;
+    --card-foreground: 42 25% 90%;
 
-    --popover: 220 12% 12%;
-    --popover-foreground: 40 20% 88%;
+    --popover: 225 15% 10%;
+    --popover-foreground: 42 25% 90%;
 
-    --primary: 36 80% 50%;
-    --primary-foreground: 220 15% 8%;
+    --primary: 38 85% 52%;
+    --primary-foreground: 228 18% 6%;
 
-    --secondary: 220 10% 18%;
-    --secondary-foreground: 40 15% 78%;
+    --secondary: 225 12% 16%;
+    --secondary-foreground: 42 18% 75%;
 
-    --muted: 220 10% 16%;
-    --muted-foreground: 220 8% 50%;
+    --muted: 225 12% 14%;
+    --muted-foreground: 225 10% 48%;
 
-    --accent: 160 100% 45%;
-    --accent-foreground: 220 15% 8%;
+    --accent: 157 100% 49%;
+    --accent-foreground: 228 18% 6%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 10% 20%;
-    --input: 220 10% 20%;
-    --ring: 36 80% 50%;
+    --border: 225 12% 18%;
+    --input: 225 12% 18%;
+    --ring: 38 85% 52%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 220 12% 10%;
-    --sidebar-foreground: 40 15% 78%;
-    --sidebar-primary: 36 80% 50%;
-    --sidebar-primary-foreground: 220 15% 8%;
-    --sidebar-accent: 220 10% 16%;
-    --sidebar-accent-foreground: 40 15% 78%;
-    --sidebar-border: 220 10% 18%;
-    --sidebar-ring: 36 80% 50%;
+    --sidebar-background: 225 15% 8%;
+    --sidebar-foreground: 42 18% 75%;
+    --sidebar-primary: 38 85% 52%;
+    --sidebar-primary-foreground: 228 18% 6%;
+    --sidebar-accent: 225 12% 14%;
+    --sidebar-accent-foreground: 42 18% 75%;
+    --sidebar-border: 225 12% 16%;
+    --sidebar-ring: 38 85% 52%;
 
-    --neon: 160 100% 45%;
-    --brass: 36 80% 50%;
-    --copper: 20 70% 42%;
+    --neon: 157 100% 49%;
+    --neon-cyan: 185 100% 55%;
+    --brass: 38 85% 52%;
+    --copper: 22 75% 45%;
+    --ember: 15 90% 55%;
+    --violet-glow: 270 80% 65%;
   }
 }
 
@@ -66,22 +69,144 @@
   }
 }
 
+/* Animated background gradient */
+@keyframes aurora {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(1deg); }
+  66% { transform: translateY(4px) rotate(-1deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes gear-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes gear-spin-reverse {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 @layer utilities {
   .neon-glow {
-    text-shadow: 0 0 7px hsl(var(--neon) / 0.6), 0 0 20px hsl(var(--neon) / 0.3);
+    text-shadow: 0 0 7px hsl(var(--neon) / 0.7), 0 0 25px hsl(var(--neon) / 0.35), 0 0 50px hsl(var(--neon) / 0.15);
   }
 
   .neon-border {
-    box-shadow: 0 0 6px hsl(var(--neon) / 0.15), inset 0 0 6px hsl(var(--neon) / 0.05);
+    box-shadow: 0 0 8px hsl(var(--neon) / 0.2), inset 0 0 8px hsl(var(--neon) / 0.06), 0 0 20px hsl(var(--neon) / 0.08);
   }
 
   .brass-glow {
-    box-shadow: 0 0 12px hsl(var(--brass) / 0.2), 0 2px 8px hsl(0 0% 0% / 0.4);
+    box-shadow: 0 0 15px hsl(var(--brass) / 0.25), 0 4px 12px hsl(0 0% 0% / 0.5), 0 0 40px hsl(var(--brass) / 0.08);
+  }
+
+  .brass-shimmer {
+    background: linear-gradient(
+      110deg,
+      hsl(var(--brass)) 0%,
+      hsl(var(--brass) / 0.8) 40%,
+      hsl(45 90% 70%) 50%,
+      hsl(var(--brass) / 0.8) 60%,
+      hsl(var(--brass)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
   }
 
   .steampunk-bg {
     background-image:
-      radial-gradient(ellipse at 20% 50%, hsl(var(--brass) / 0.04) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, hsl(var(--neon) / 0.03) 0%, transparent 40%);
+      radial-gradient(ellipse at 15% 80%, hsl(var(--brass) / 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 20%, hsl(var(--neon) / 0.04) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, hsl(var(--violet-glow) / 0.02) 0%, transparent 60%),
+      radial-gradient(circle at 70% 80%, hsl(var(--ember) / 0.03) 0%, transparent 35%);
+  }
+
+  .aurora-bg {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background)) 0%,
+      hsl(225 20% 8%) 25%,
+      hsl(var(--background)) 50%,
+      hsl(220 18% 9%) 75%,
+      hsl(var(--background)) 100%
+    );
+    background-size: 400% 400%;
+    animation: aurora 15s ease infinite;
+  }
+
+  .card-glow {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--brass) / 0.5), hsl(var(--neon) / 0.3), transparent);
+  }
+
+  .card-hover {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 0 20px hsl(var(--brass) / 0.15),
+      0 8px 30px hsl(0 0% 0% / 0.4),
+      0 0 60px hsl(var(--neon) / 0.05);
+  }
+
+  .divider-glow {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--brass) / 0.4), hsl(var(--neon) / 0.2), hsl(var(--brass) / 0.4), transparent);
+  }
+
+  .text-gradient-brass {
+    background: linear-gradient(135deg, hsl(var(--brass)), hsl(45 90% 68%), hsl(var(--copper)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-neon {
+    background: linear-gradient(135deg, hsl(var(--neon)), hsl(var(--neon-cyan)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gear-slow {
+    animation: gear-spin 12s linear infinite;
+  }
+
+  .gear-reverse {
+    animation: gear-spin-reverse 16s linear infinite;
+  }
+
+  .floating {
+    animation: float 6s ease-in-out infinite;
   }
 }
