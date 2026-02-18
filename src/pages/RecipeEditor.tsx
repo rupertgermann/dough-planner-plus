@@ -82,8 +82,8 @@ const RecipeEditor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+    <div className="min-h-screen bg-background steampunk-bg">
+      <header className="border-b border-brass/20 bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto flex items-center gap-4 px-4 py-5">
           <Button asChild variant="ghost" size="icon">
             <Link to="/">
@@ -91,17 +91,17 @@ const RecipeEditor = () => {
             </Link>
           </Button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">
+            <h1 className="text-xl font-bold text-brass">
               {isNew ? "New Recipe" : "Edit Recipe"}
             </h1>
           </div>
-          <Button onClick={handleSave}>Save Recipe</Button>
+          <Button onClick={handleSave} className="bg-brass text-background hover:bg-brass/80 brass-glow">Save Recipe</Button>
         </div>
       </header>
 
       <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8">
         {/* Basic Info */}
-        <Card>
+        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-base">Basic Info</CardTitle>
           </CardHeader>
@@ -129,7 +129,7 @@ const RecipeEditor = () => {
         </Card>
 
         {/* Ingredients */}
-        <Card>
+        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Ingredients</CardTitle>
             <Button
@@ -179,7 +179,7 @@ const RecipeEditor = () => {
         </Card>
 
         {/* Steps */}
-        <Card>
+        <Card className="border-brass/20 bg-card/70 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Baking Steps</CardTitle>
             <Button
@@ -197,7 +197,7 @@ const RecipeEditor = () => {
                 key={step.id}
                 className="flex gap-3 rounded-lg border bg-muted/30 p-3"
               >
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neon/20 border border-neon/40 text-xs font-bold text-neon">
                   {i + 1}
                 </div>
                 <div className="flex-1 space-y-2">
