@@ -15,6 +15,7 @@ const emptyIngredient = (): Ingredient => ({
   name: "",
   amount: "",
   unit: "",
+  percentage: "",
 });
 
 const emptyStep = (): BakingStep => ({
