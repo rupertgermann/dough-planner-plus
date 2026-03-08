@@ -81,7 +81,7 @@ const RecipeEditor = () => {
     }
   }, [id, isNew, navigate]);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (!name.trim()) {
       toast.error("Please enter a recipe name");
       return;
