@@ -318,7 +318,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                     <>
                       <button
                         type="button"
-                        onClick={() => cameraRef.current?.click()}
+                        onClick={openWebcam}
                         className="h-20 w-20 rounded-md border-2 border-dashed border-neon/30 hover:border-neon/60 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-base"
                       >
                         <Camera className="h-5 w-5" />
