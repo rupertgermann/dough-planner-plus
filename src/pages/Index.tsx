@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical, ArrowUpDown, Pencil, CalendarClock } from "lucide-react";
+import { Plus, Search, Clock, Import, Trash2, Wheat, FlaskConical, ArrowUpDown, Pencil, CalendarClock } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
@@ -90,12 +90,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
-      {/* Decorative gears */}
-      <div className="fixed top-[-60px] right-[-60px] opacity-[0.04] pointer-events-none">
-        <Cog className="h-48 w-48 text-brass gear-slow" />
+      {/* Decorative wheat */}
+      <div className="fixed top-[-60px] right-[-60px] opacity-[0.04] pointer-events-none rotate-12">
+        <Wheat className="h-48 w-48 text-brass" />
       </div>
-      <div className="fixed bottom-[-40px] left-[-40px] opacity-[0.03] pointer-events-none">
-        <Cog className="h-36 w-36 text-neon gear-reverse" />
+      <div className="fixed bottom-[-40px] left-[-40px] opacity-[0.03] pointer-events-none -rotate-12">
+        <Wheat className="h-36 w-36 text-neon" />
       </div>
 
       <header className="relative border-b border-brass/20 glass-heavy">
@@ -103,7 +103,7 @@ const Index = () => {
         <div className="container mx-auto flex items-center justify-between px-4 py-6">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Cog className="h-8 w-8 text-neon gear-slow" />
+              <Wheat className="h-8 w-8 text-neon" />
               <div className="absolute inset-0 h-8 w-8 rounded-full bg-neon/20 blur-md" />
             </div>
             <div>
@@ -204,8 +204,8 @@ const Index = () => {
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="relative mb-6">
-              <Cog className="h-20 w-20 text-brass/30 gear-slow" />
-              <Cog className="absolute top-6 left-12 h-12 w-12 text-neon/20 gear-reverse" />
+              <Wheat className="h-20 w-20 text-brass/30" />
+              <Wheat className="absolute top-6 left-12 h-12 w-12 text-neon/20 -rotate-45" />
             </div>
             <h2 className="mb-2 text-2xl font-semibold text-gradient-brass">
               {recipes.length > 0 ? "No matches" : "No recipes yet"}
