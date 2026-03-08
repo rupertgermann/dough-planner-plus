@@ -72,6 +72,10 @@ const RecipeDetail = () => {
     window.print();
   };
 
+  useKeyboardShortcuts(useMemo(() => [
+    { key: "p", ctrl: true, handler: () => handlePrint() },
+  ], []));
+
   const totalTime = recipe?.steps.reduce((sum, s) => sum + s.durationMinutes, 0) || 0;
   const hours = Math.floor(totalTime / 60);
   const mins = totalTime % 60;
