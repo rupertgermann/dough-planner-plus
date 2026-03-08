@@ -498,6 +498,31 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Webcam capture dialog */}
+      <Dialog open={showWebcam} onOpenChange={(open) => { if (!open) closeWebcam(); }}>
+        <DialogContent className="max-w-lg border-brass/20 glass-heavy p-4">
+          <DialogTitle className="text-gradient-brass text-base">Take a Photo</DialogTitle>
+          <div className="relative rounded-lg overflow-hidden bg-black aspect-[4/3]">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex justify-center gap-3 pt-2">
+            <Button variant="brass" onClick={captureWebcam}>
+              <Camera className="mr-2 h-4 w-4" />
+              Capture
+            </Button>
+            <Button variant="outline" className="border-brass/30" onClick={closeWebcam}>
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
