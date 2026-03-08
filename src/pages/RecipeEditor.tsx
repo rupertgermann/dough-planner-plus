@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRecipe, saveRecipe, generateId } from "@/lib/storage";
-import { Recipe, Ingredient, BakingStep } from "@/types/recipe";
+import { Recipe, Ingredient, BakingStep, PRESET_TAGS } from "@/types/recipe";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   DndContext,
