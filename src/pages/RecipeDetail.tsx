@@ -11,6 +11,10 @@ import { Recipe } from "@/types/recipe";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BakeLog } from "@/components/BakeLog";
+import { HydrationBadge } from "@/components/HydrationBadge";
+import { DDTCalculator } from "@/components/DDTCalculator";
+import { BatchCost } from "@/components/BatchCost";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 const FLOUR_KEYWORDS = ["flour", "mehl", "farine", "harina"];
@@ -226,16 +230,19 @@ const RecipeDetail = () => {
 
       <main className="container mx-auto max-w-2xl space-y-6 px-4 py-6 sm:py-8 relative z-10">
         {/* Summary */}
-        <div className="flex items-center gap-3 sm:gap-4 text-sm text-muted-foreground font-mono-tech print:text-[#666] flex-wrap">
-          <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>Total: {hours > 0 && `${hours}h `}{mins}min</span>
+        <TooltipProvider>
+          <div className="flex items-center gap-3 sm:gap-4 text-sm text-muted-foreground font-mono-tech print:text-[#666] flex-wrap">
+            <div className="flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              <span>Total: {hours > 0 && `${hours}h `}{mins}min</span>
+            </div>
+            <span className="hidden sm:inline">•</span>
+            <span>{recipe.ingredients.length} ingredients</span>
+            <span className="hidden sm:inline">•</span>
+            <span>{recipe.steps.length} steps</span>
+            <HydrationBadge ingredients={recipe.ingredients} scale={scale} />
           </div>
-          <span className="hidden sm:inline">•</span>
-          <span>{recipe.ingredients.length} ingredients</span>
-          <span className="hidden sm:inline">•</span>
-          <span>{recipe.steps.length} steps</span>
-        </div>
+        </TooltipProvider>
 
         {/* Ingredients */}
         <Card className="card-glow border-brass/15 glass print:bg-[white] print:border-[#ddd] print:shadow-none">
@@ -392,6 +399,12 @@ const RecipeDetail = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* DDT Calculator */}
+        <DDTCalculator />
+
+        {/* Batch Cost */}
+        <BatchCost ingredients={recipe.ingredients} scale={scale} recipeId={recipe.id} />
 
         {/* Bake Log */}
         <BakeLog recipe={recipe} onUpdated={setRecipe} />
