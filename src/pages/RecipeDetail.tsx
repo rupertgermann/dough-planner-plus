@@ -31,6 +31,8 @@ const RecipeDetail = () => {
       const r = getRecipe(id);
       if (r) {
         setRecipe(r);
+        document.title = r.name;
+        return () => { document.title = "Bread Scheduler"; };
       } else {
         navigate("/");
       }
