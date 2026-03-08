@@ -74,6 +74,7 @@ const RecipeEditor = () => {
       if (recipe) {
         setName(recipe.name);
         setDescription(recipe.description);
+        setTags(recipe.tags || []);
         setIngredients(recipe.ingredients.length ? recipe.ingredients : [emptyIngredient()]);
         setSteps(recipe.steps.length ? recipe.steps : [emptyStep()]);
       } else {
