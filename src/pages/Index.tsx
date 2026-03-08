@@ -35,7 +35,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
+    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
       {/* Decorative gears */}
       <div className="fixed top-[-60px] right-[-60px] opacity-[0.04] pointer-events-none">
         <Cog className="h-48 w-48 text-brass gear-slow" />
