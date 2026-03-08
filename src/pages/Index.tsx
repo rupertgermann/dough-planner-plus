@@ -315,6 +315,7 @@ const Index = () => {
                         </AlertDialog>
                       </span>
                     </div>
+                  </CardContent>
                 </Card>
               </Link>
             ))}
