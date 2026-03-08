@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ExportImportDialog } from "@/components/ExportImportDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -83,6 +84,7 @@ const Index = () => {
                 Load Demos
               </Button>
             )}
+            <ExportImportDialog onImported={() => setRecipes(getRecipes())} />
             <Button asChild variant="outline" size="sm" className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base">
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
