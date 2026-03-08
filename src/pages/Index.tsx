@@ -4,6 +4,7 @@ import { Plus, Search, Clock, Import, Trash2, Wheat, FlaskConical, ArrowUpDown, 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
+import { InstallPWA } from "@/components/InstallPWA";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
