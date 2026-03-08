@@ -84,6 +84,7 @@ const Index = () => {
                 Load Demos
               </Button>
             )}
+            <ExportImportDialog onImported={() => setRecipes(getRecipes())} />
             <Button asChild variant="outline" size="sm" className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base">
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
