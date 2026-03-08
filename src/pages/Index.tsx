@@ -71,6 +71,17 @@ const Index = () => {
             </div>
           </div>
           <div className="flex gap-2">
+            {SHOW_DEMO_BUTTON && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-neon/30 hover:border-neon/60 hover:bg-neon/10 text-neon transition-all duration-300"
+                onClick={handleLoadDemos}
+              >
+                <FlaskConical className="mr-1 h-4 w-4" />
+                Load Demos
+              </Button>
+            )}
             <Button asChild variant="outline" size="sm" className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300">
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
