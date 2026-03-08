@@ -358,6 +358,46 @@ const Index = () => {
               </Link>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                ← Prev
+              </Button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <Button
+                    key={p}
+                    variant={p === page ? "brass" : "ghost"}
+                    size="sm"
+                    className={`h-8 w-8 p-0 font-mono-tech ${p !== page ? "text-muted-foreground hover:text-foreground" : ""}`}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next →
+              </Button>
+              <span className="text-xs text-muted-foreground font-mono-tech ml-2">
+                {filtered.length} recipe{filtered.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          )}
         )}
       </main>
     </div>
