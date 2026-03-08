@@ -374,3 +374,63 @@
     transition: all var(--transition-spring);
   }
 }
+
+/* ===== Print Styles ===== */
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-text-fill-color: #000 !important;
+    animation: none !important;
+    transition: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    opacity: 1 !important;
+  }
+
+  body {
+    font-family: "Georgia", "Times New Roman", serif !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3 {
+    font-family: "Georgia", "Times New Roman", serif !important;
+  }
+
+  .noise-overlay::after,
+  .mechanical-pattern::before,
+  .card-glow::before,
+  .divider-glow {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Cards: simple bordered boxes */
+  [class*="card-glow"],
+  [class*="glass"] {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+    border-radius: 4px !important;
+  }
+
+  /* Timeline dots */
+  .rounded-full {
+    border-color: #333 !important;
+    background: #fff !important;
+  }
+
+  /* Links */
+  a {
+    text-decoration: none !important;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 1.5cm;
+  }
+}
