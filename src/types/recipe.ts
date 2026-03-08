@@ -19,6 +19,9 @@ export interface BakeLogEntry {
   rating: number; // 1-5
   notes: string;
   changes: string;
+  crumbRating?: number; // 1-5
+  crustColor?: string;
+  ovenSpring?: number; // 1-5
 }
 
 export interface Recipe {

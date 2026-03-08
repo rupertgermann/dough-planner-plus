@@ -49,11 +49,16 @@ const StarRating = ({
   </div>
 );
 
+const CRUST_OPTIONS = ["Pale", "Light golden", "Golden", "Deep golden", "Dark / caramelised"];
+
 export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
   const [adding, setAdding] = useState(false);
   const [rating, setRating] = useState(4);
   const [notes, setNotes] = useState("");
   const [changes, setChanges] = useState("");
+  const [crumbRating, setCrumbRating] = useState(3);
+  const [crustColor, setCrustColor] = useState("");
+  const [ovenSpring, setOvenSpring] = useState(3);
 
   const entries = recipe.bakeLog || [];
 
@@ -68,6 +73,9 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
       rating,
       notes: notes.trim(),
       changes: changes.trim(),
+      crumbRating,
+      crustColor: crustColor || undefined,
+      ovenSpring,
     };
     const updated = {
       ...recipe,
@@ -79,6 +87,9 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
     setNotes("");
     setChanges("");
     setRating(4);
+    setCrumbRating(3);
+    setCrustColor("");
+    setOvenSpring(3);
     toast.success("Bake logged!");
   };
 
@@ -113,18 +124,66 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
       <CardContent className="space-y-4">
         {adding && (
           <div className="space-y-3 p-4 rounded-lg border border-neon/20 bg-neon/5">
+            {/* Overall rating */}
             <div>
               <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">
-                Rating
+                Overall Rating
               </Label>
               <StarRating value={rating} onChange={setRating} />
             </div>
+
+            {/* Crumb, Crust, Oven Spring row */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">
+                  Crumb
+                </Label>
+                <StarRating value={crumbRating} onChange={setCrumbRating} />
+                <span className="text-[10px] text-muted-foreground font-mono-tech">
+                  {crumbRating <= 2 ? "Dense / tight" : crumbRating <= 3 ? "Decent" : "Open & airy"}
+                </span>
+              </div>
+              <div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">
+                  Oven Spring
+                </Label>
+                <StarRating value={ovenSpring} onChange={setOvenSpring} />
+                <span className="text-[10px] text-muted-foreground font-mono-tech">
+                  {ovenSpring <= 2 ? "Flat" : ovenSpring <= 3 ? "Moderate" : "Great rise"}
+                </span>
+              </div>
+              <div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">
+                  Crust Color
+                </Label>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {CRUST_OPTIONS.map((opt) => (
+                    <Button
+                      key={opt}
+                      type="button"
+                      variant={crustColor === opt ? "ghost-neon" : "outline"}
+                      size="sm"
+                      className={
+                        crustColor === opt
+                          ? "h-6 px-2 text-[10px] bg-neon/20"
+                          : "h-6 px-2 text-[10px] border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base"
+                      }
+                      onClick={() => setCrustColor(crustColor === opt ? "" : opt)}
+                    >
+                      {opt}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
             <div>
               <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">
                 Notes
               </Label>
               <Textarea
-                placeholder="How did this bake go? Crumb, crust, flavor…"
+                placeholder="How did this bake go? Flavor, texture, aroma…"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
@@ -154,6 +213,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                   setAdding(false);
                   setNotes("");
                   setChanges("");
+                  setCrustColor("");
                 }}
               >
                 Cancel
@@ -170,7 +230,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
           entries.map((entry) => (
             <div
               key={entry.id}
-              className="group relative p-3 rounded-lg border border-brass/10 bg-card/40 space-y-1"
+              className="group relative p-3 rounded-lg border border-brass/10 bg-card/40 space-y-1.5"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -210,6 +270,28 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
+
+              {/* Scoring badges */}
+              {(entry.crumbRating || entry.ovenSpring || entry.crustColor) && (
+                <div className="flex flex-wrap gap-2 text-[10px] font-mono-tech">
+                  {entry.crumbRating && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-accent/40 px-2 py-0.5 text-accent-foreground">
+                      Crumb {entry.crumbRating}/5
+                    </span>
+                  )}
+                  {entry.ovenSpring && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-accent/40 px-2 py-0.5 text-accent-foreground">
+                      Spring {entry.ovenSpring}/5
+                    </span>
+                  )}
+                  {entry.crustColor && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-accent/40 px-2 py-0.5 text-accent-foreground">
+                      Crust: {entry.crustColor}
+                    </span>
+                  )}
+                </div>
+              )}
+
               <p className="text-sm text-foreground">{entry.notes}</p>
               {entry.changes && (
                 <p className="text-xs text-neon font-mono-tech">
