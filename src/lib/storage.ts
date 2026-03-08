@@ -119,3 +119,31 @@ export function deleteRecipe(id: string): void {
 export function generateId(): string {
   return crypto.randomUUID();
 }
+
+export function exportRecipesJSON(): string {
+  return JSON.stringify(getRecipes(), null, 2);
+}
+
+export function importRecipesFromJSON(json: string): { added: number; skipped: number } {
+  const incoming: Recipe[] = JSON.parse(json);
+  if (!Array.isArray(incoming)) throw new Error("Invalid format: expected an array");
+  const existing = getRecipes();
+  const existingIds = new Set(existing.map((r) => r.id));
+  let added = 0;
+  let skipped = 0;
+  for (const recipe of incoming) {
+    if (!recipe.id || !recipe.name || !Array.isArray(recipe.steps)) {
+      skipped++;
+      continue;
+    }
+    if (existingIds.has(recipe.id)) {
+      skipped++;
+      continue;
+    }
+    existing.push(recipe);
+    existingIds.add(recipe.id);
+    added++;
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+  return { added, skipped };
+}
