@@ -212,50 +212,75 @@ const RecipeEditor = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {steps.map((step, i) => (
-              <div
-                key={step.id}
-                className="flex gap-3 rounded-lg border border-brass/10 bg-muted/20 p-4 backdrop-blur-sm card-hover"
-              >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-xs font-bold text-neon neon-border">
-                  {i + 1}
+              <div key={step.id} className="space-y-2">
+                {/* Insert before button */}
+                <div className="flex justify-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-xs text-muted-foreground hover:text-neon hover:bg-neon/10 transition-all duration-300"
+                    onClick={() => setSteps((prev) => [...prev.slice(0, i), emptyStep(), ...prev.slice(i)])}
+                  >
+                    <Plus className="mr-1 h-3 w-3" />
+                    Insert above
+                  </Button>
                 </div>
-                <div className="flex-1 space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Step name (e.g. Bulk ferment)"
-                      value={step.name}
-                      onChange={(e) => updateStep(i, "name", e.target.value)}
-                      className="flex-1 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
-                    />
-                    <div className="flex items-center gap-1">
-                      <Input
-                        type="number"
-                        placeholder="Min"
-                        value={step.durationMinutes || ""}
-                        onChange={(e) =>
-                          updateStep(i, "durationMinutes", parseInt(e.target.value) || 0)
-                        }
-                        className="w-20 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
-                      />
-                      <span className="text-xs text-muted-foreground">min</span>
-                    </div>
+                <div className="flex gap-3 rounded-lg border border-brass/10 bg-muted/20 p-4 backdrop-blur-sm card-hover">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-xs font-bold text-neon neon-border">
+                    {i + 1}
                   </div>
-                  <Textarea
-                    placeholder="Instructions for this step…"
-                    value={step.instructions}
-                    onChange={(e) => updateStep(i, "instructions", e.target.value)}
-                    rows={2}
-                    className="text-sm border-brass/15 bg-background/40 focus-visible:ring-neon/40"
-                  />
+                  <div className="flex-1 space-y-2">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Step name (e.g. Bulk ferment)"
+                        value={step.name}
+                        onChange={(e) => updateStep(i, "name", e.target.value)}
+                        className="flex-1 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
+                      />
+                      <div className="flex items-center gap-1">
+                        <Input
+                          type="number"
+                          placeholder="Min"
+                          value={step.durationMinutes || ""}
+                          onChange={(e) =>
+                            updateStep(i, "durationMinutes", parseInt(e.target.value) || 0)
+                          }
+                          className="w-20 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
+                        />
+                        <span className="text-xs text-muted-foreground">min</span>
+                      </div>
+                    </div>
+                    <Textarea
+                      placeholder="Instructions for this step…"
+                      value={step.instructions}
+                      onChange={(e) => updateStep(i, "instructions", e.target.value)}
+                      rows={2}
+                      className="text-sm border-brass/15 bg-background/40 focus-visible:ring-neon/40"
+                    />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
+                    onClick={() => setSteps((prev) => prev.filter((_, j) => j !== i))}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
-                  onClick={() => setSteps((prev) => prev.filter((_, j) => j !== i))}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                {/* Insert after button (only on last item) */}
+                {i === steps.length - 1 && (
+                  <div className="flex justify-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 text-xs text-muted-foreground hover:text-neon hover:bg-neon/10 transition-all duration-300"
+                      onClick={() => setSteps((prev) => [...prev, emptyStep()])}
+                    >
+                      <Plus className="mr-1 h-3 w-3" />
+                      Insert below
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </CardContent>
