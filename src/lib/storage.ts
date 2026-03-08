@@ -8,6 +8,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-sourdough",
     name: "Classic Sourdough",
     description: "A crusty, tangy sourdough with an open crumb. Perfect weekend bake using a mature levain.",
+    tags: ["Sourdough"],
     ingredients: [
       { id: "i1", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i2", name: "Water", amount: "375", unit: "g" },
