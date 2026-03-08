@@ -101,7 +101,7 @@ const RecipeEditor = () => {
               {isNew ? "New Recipe" : "Edit Recipe"}
             </h1>
           </div>
-          <Button onClick={handleSave} className="brass-shimmer text-primary-foreground font-semibold brass-glow hover:scale-105 transition-transform duration-300">
+          <Button onClick={handleSave} className="bg-primary text-primary-foreground font-semibold hover:bg-primary/90 hover:scale-105 transition-transform duration-300">
             Save Recipe
           </Button>
         </div>
