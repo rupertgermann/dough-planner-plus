@@ -3,6 +3,7 @@ export interface Ingredient {
   name: string;
   amount: string;
   unit: string;
+  percentage?: string;
 }
 
 export interface BakingStep {
