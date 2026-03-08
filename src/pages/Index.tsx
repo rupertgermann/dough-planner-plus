@@ -4,6 +4,7 @@ import { Plus, Search, Clock, Import, Trash2, Wheat, FlaskConical, ArrowUpDown, 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
+import { InstallPWA } from "@/components/InstallPWA";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -143,6 +144,7 @@ const Index = () => {
               </Button>
             )}
             <ExportImportDialog onImported={() => setRecipes(getRecipes())} />
+            <InstallPWA />
             <Button asChild variant="outline" size="sm" className={btnOutlineClass}>
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
