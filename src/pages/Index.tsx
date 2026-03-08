@@ -1,18 +1,19 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { Plus, Search, Clock, Import, Trash2, Wheat, FlaskConical, ArrowUpDown, Pencil, CalendarClock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus, Search, Clock, Import, Trash2, Wheat, FlaskConical, ArrowUpDown, Pencil, CalendarClock, Copy } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { getRecipes, deleteRecipe, saveRecipe } from "@/lib/storage";
+import { getRecipes, deleteRecipe, saveRecipe, duplicateRecipe } from "@/lib/storage";
 import { DEMO_RECIPES } from "@/lib/demo-recipes";
 import { Recipe, PRESET_TAGS } from "@/types/recipe";
+import { toast } from "sonner";
 
 const SHOW_DEMO_BUTTON = import.meta.env.VITE_HIDE_DEMO_BUTTON !== "true";
 
