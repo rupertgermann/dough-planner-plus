@@ -83,6 +83,15 @@ const Index = () => {
     setRecipes(getRecipes());
   };
 
+  const handleDuplicate = (id: string) => {
+    const dup = duplicateRecipe(id);
+    if (dup) {
+      toast.success(`Duplicated as "${dup.name}"`);
+      setRecipes(getRecipes());
+      navigate(`/recipe/${dup.id}`);
+    }
+  };
+
   const handleLoadDemos = () => {
     DEMO_RECIPES.forEach((r) => saveRecipe({ ...r, bakeLog: [] }));
     setRecipes(getRecipes());
