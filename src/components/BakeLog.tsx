@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Plus, Star, Trash2, Camera, X, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -87,8 +87,11 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
   const [ovenSpring, setOvenSpring] = useState(3);
   const [photos, setPhotos] = useState<string[]>([]);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [showWebcam, setShowWebcam] = useState(false);
   const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const entries = recipe.bakeLog || [];
 
@@ -118,6 +121,49 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
   const removePhoto = (index: number) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
+
+  const openWebcam = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 } },
+      });
+      streamRef.current = stream;
+      setShowWebcam(true);
+      // attach stream after dialog renders
+      requestAnimationFrame(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      });
+    } catch {
+      toast.error("Could not access camera — check browser permissions");
+    }
+  }, []);
+
+  const closeWebcam = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    setShowWebcam(false);
+  }, []);
+
+  const captureWebcam = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")!.drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+    setPhotos((prev) => [...prev, dataUrl].slice(0, MAX_PHOTOS));
+    closeWebcam();
+  }, [closeWebcam]);
+
+  // cleanup stream on unmount
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
 
   const handleAdd = () => {
     if (!notes.trim()) {
@@ -272,7 +318,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                     <>
                       <button
                         type="button"
-                        onClick={() => cameraRef.current?.click()}
+                        onClick={openWebcam}
                         className="h-20 w-20 rounded-md border-2 border-dashed border-neon/30 hover:border-neon/60 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-base"
                       >
                         <Camera className="h-5 w-5" />
@@ -288,14 +334,6 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                       </button>
                     </>
                   )}
-                  <input
-                    ref={cameraRef}
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    className="hidden"
-                    onChange={handlePhotoUpload}
-                  />
                   <input
                     ref={fileRef}
                     type="file"
@@ -458,6 +496,31 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
               className="w-full h-auto rounded-md"
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Webcam capture dialog */}
+      <Dialog open={showWebcam} onOpenChange={(open) => { if (!open) closeWebcam(); }}>
+        <DialogContent className="max-w-lg border-brass/20 glass-heavy p-4">
+          <DialogTitle className="text-gradient-brass text-base">Take a Photo</DialogTitle>
+          <div className="relative rounded-lg overflow-hidden bg-black aspect-[4/3]">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex justify-center gap-3 pt-2">
+            <Button variant="brass" onClick={captureWebcam}>
+              <Camera className="mr-2 h-4 w-4" />
+              Capture
+            </Button>
+            <Button variant="outline" className="border-brass/30" onClick={closeWebcam}>
+              Cancel
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </>
