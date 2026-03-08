@@ -103,7 +103,7 @@ const Index = () => {
         <div className="container mx-auto flex items-center justify-between px-4 py-6">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Cog className="h-8 w-8 text-neon gear-slow" />
+              <Wheat className="h-8 w-8 text-neon" />
               <div className="absolute inset-0 h-8 w-8 rounded-full bg-neon/20 blur-md" />
             </div>
             <div>
