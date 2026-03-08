@@ -1,15 +1,27 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Edit, Printer, Clock, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRecipe } from "@/lib/storage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Recipe } from "@/types/recipe";
 
 const RecipeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [readyTime, setReadyTime] = useState(() => {
+    const d = new Date();
+    d.setHours(d.getHours() + 6);
+    d.setMinutes(0);
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  });
+  const [readyDate, setReadyDate] = useState(() => {
+    const d = new Date();
+    return d.toISOString().split("T")[0];
+  });
 
   useEffect(() => {
     if (id) {
@@ -21,6 +33,37 @@ const RecipeDetail = () => {
       }
     }
   }, [id, navigate]);
+
+  const timeline = useMemo(() => {
+    if (!recipe || !recipe.steps.length) return [];
+
+    const [hours, minutes] = readyTime.split(":").map(Number);
+    const ready = new Date(readyDate);
+    ready.setHours(hours, minutes, 0, 0);
+
+    const entries: { step: typeof recipe.steps[0]; startTime: Date; endTime: Date }[] = [];
+    let cursor = new Date(ready);
+
+    for (let i = recipe.steps.length - 1; i >= 0; i--) {
+      const step = recipe.steps[i];
+      const endTime = new Date(cursor);
+      cursor = new Date(cursor.getTime() - step.durationMinutes * 60 * 1000);
+      const startTime = new Date(cursor);
+      entries.unshift({ step, startTime, endTime });
+    }
+
+    return entries;
+  }, [recipe, readyTime, readyDate]);
+
+  const formatTime = (d: Date) =>
+    d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const formatDuration = (mins: number) => {
+    if (mins < 60) return `${mins} min`;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  };
 
   const handlePrint = () => {
     window.print();
@@ -39,12 +82,12 @@ const RecipeDetail = () => {
   }
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden print:bg-white print:text-black">
+    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden print:!bg-[white] print:!text-[black]">
       <div className="fixed bottom-[-30px] right-[-30px] opacity-[0.03] pointer-events-none print:hidden">
         <Cog className="h-32 w-32 text-brass gear-slow" />
       </div>
 
-      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl print:bg-white print:border-gray-200">
+      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl print:bg-[white] print:border-[#ddd]">
         <div className="absolute inset-x-0 bottom-0 divider-glow print:hidden" />
         <div className="container mx-auto flex items-center gap-4 px-4 py-6">
           <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10 print:hidden">
@@ -53,11 +96,11 @@ const RecipeDetail = () => {
             </Link>
           </Button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gradient-brass print:text-black print:bg-none print:[-webkit-text-fill-color:black]">
+            <h1 className="text-2xl font-bold text-gradient-brass print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
               {recipe.name}
             </h1>
             {recipe.description && (
-              <p className="mt-1 text-sm text-muted-foreground print:text-gray-600">{recipe.description}</p>
+              <p className="mt-1 text-sm text-muted-foreground print:text-[#666]">{recipe.description}</p>
             )}
           </div>
           <div className="flex gap-2 print:hidden">
@@ -81,7 +124,7 @@ const RecipeDetail = () => {
 
       <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8 relative z-10">
         {/* Summary */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground print:text-gray-600">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground print:text-[#666]">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
             <span>
@@ -95,9 +138,9 @@ const RecipeDetail = () => {
         </div>
 
         {/* Ingredients */}
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md print:bg-white print:border-gray-200 print:shadow-none">
+        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md print:bg-[white] print:border-[#ddd] print:shadow-none">
           <CardHeader>
-            <CardTitle className="text-base text-gradient-brass print:text-black print:bg-none print:[-webkit-text-fill-color:black]">
+            <CardTitle className="text-base text-gradient-brass print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
               Ingredients
             </CardTitle>
           </CardHeader>
@@ -105,12 +148,12 @@ const RecipeDetail = () => {
             <ul className="space-y-2">
               {recipe.ingredients.map((ing) => (
                 <li key={ing.id} className="flex items-baseline gap-2">
-                  <span className="font-medium text-foreground print:text-black">
+                  <span className="font-medium text-foreground print:text-[black]">
                     {ing.amount} {ing.unit}
                   </span>
-                  <span className="text-muted-foreground print:text-gray-700">{ing.name}</span>
+                  <span className="text-muted-foreground print:text-[#444]">{ing.name}</span>
                   {ing.percentage && (
-                    <span className="ml-auto text-xs text-neon print:text-gray-500">
+                    <span className="ml-auto text-xs text-neon print:text-[#666]">
                       ({ing.percentage}%)
                     </span>
                   )}
@@ -120,39 +163,100 @@ const RecipeDetail = () => {
           </CardContent>
         </Card>
 
-        {/* Steps */}
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md print:bg-white print:border-gray-200 print:shadow-none">
+        {/* Timetable Configuration */}
+        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md print:bg-[white] print:border-[#ddd] print:shadow-none">
           <CardHeader>
-            <CardTitle className="text-base text-gradient-brass print:text-black print:bg-none print:[-webkit-text-fill-color:black]">
-              Baking Steps
+            <CardTitle className="text-base text-gradient-brass print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
+              Timetable
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {recipe.steps.map((step, i) => (
-              <div
-                key={step.id}
-                className="flex gap-3 rounded-lg border border-brass/10 bg-muted/20 p-4 print:bg-gray-50 print:border-gray-200"
-              >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-xs font-bold text-neon print:bg-gray-200 print:border-gray-300 print:text-gray-700">
-                  {i + 1}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground print:text-black">{step.name}</h3>
-                    {step.durationMinutes > 0 && (
-                      <span className="text-xs text-brass print:text-gray-500">
-                        ({step.durationMinutes} min)
+          <CardContent>
+            <div className="flex flex-wrap items-end gap-4 mb-6 print:hidden">
+              <div>
+                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Ready date</Label>
+                <Input
+                  type="date"
+                  value={readyDate}
+                  onChange={(e) => setReadyDate(e.target.value)}
+                  className="w-40 border-brass/20 bg-background/50 focus-visible:ring-neon/40"
+                />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Ready time</Label>
+                <Input
+                  type="time"
+                  value={readyTime}
+                  onChange={(e) => setReadyTime(e.target.value)}
+                  className="w-32 border-brass/20 bg-background/50 focus-visible:ring-neon/40"
+                />
+              </div>
+              {timeline.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Start at{" "}
+                  <span className="font-semibold text-gradient-neon">
+                    {formatTime(timeline[0].startTime)}
+                  </span>
+                </p>
+              )}
+            </div>
+
+            {/* Print-only header */}
+            <div className="hidden print:block print:mb-4">
+              <p className="text-sm print:text-[#444]">
+                Ready: {readyDate} at {readyTime}
+                {timeline.length > 0 && ` • Start at ${formatTime(timeline[0].startTime)}`}
+              </p>
+            </div>
+
+            {/* Timeline */}
+            {recipe.steps.length > 0 && (
+              <div className="relative space-y-0">
+                <div className="absolute left-[39px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-brass/40 via-neon/30 to-brass/40 print:bg-[#ccc]" />
+
+                {timeline.map(({ step, startTime }, i) => (
+                  <div key={step.id} className="relative flex gap-4 pb-4 group">
+                    <div className="w-[80px] shrink-0 pt-3 text-right">
+                      <span className="text-sm font-semibold font-mono text-foreground print:text-[black]">
+                        {formatTime(startTime)}
                       </span>
-                    )}
+                    </div>
+                    <div className="relative z-10 mt-3.5 shrink-0">
+                      <div className="h-3 w-3 rounded-full border-2 border-neon bg-card shadow-[0_0_8px_hsl(157_100%_49%/0.5)] print:border-[#666] print:bg-[white] print:shadow-none" />
+                    </div>
+                    <div className="flex-1 pt-2">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-foreground print:text-[black]">{step.name}</h3>
+                        <span className="text-xs text-brass print:text-[#666]">
+                          ({formatDuration(step.durationMinutes)})
+                        </span>
+                      </div>
+                      {step.instructions && (
+                        <p className="mt-0.5 text-sm text-muted-foreground print:text-[#555]">
+                          {step.instructions}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {step.instructions && (
-                    <p className="mt-1 text-sm text-muted-foreground print:text-gray-600">
-                      {step.instructions}
-                    </p>
-                  )}
+                ))}
+
+                {/* Ready marker */}
+                <div className="relative flex gap-4">
+                  <div className="w-[80px] shrink-0 pt-3 text-right">
+                    <span className="text-sm font-bold font-mono text-neon neon-glow print:text-[black] print:[text-shadow:none]">
+                      {readyTime}
+                    </span>
+                  </div>
+                  <div className="relative z-10 mt-3.5 shrink-0">
+                    <div className="h-3 w-3 rounded-full bg-neon shadow-[0_0_12px_hsl(157_100%_49%/0.6)] print:bg-[black] print:shadow-none" />
+                  </div>
+                  <div className="pt-2.5">
+                    <span className="text-lg font-bold text-gradient-neon print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
+                      🍞 Bread ready!
+                    </span>
+                  </div>
                 </div>
               </div>
-            ))}
+            )}
           </CardContent>
         </Card>
       </main>
