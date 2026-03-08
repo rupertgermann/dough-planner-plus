@@ -144,6 +144,7 @@ const Index = () => {
               </Button>
             )}
             <ExportImportDialog onImported={() => setRecipes(getRecipes())} />
+            <InstallPWA />
             <Button asChild variant="outline" size="sm" className={btnOutlineClass}>
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
