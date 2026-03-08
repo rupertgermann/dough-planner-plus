@@ -30,6 +30,7 @@ const formatDuration = (mins: number) => {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [search, setSearch] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
