@@ -335,14 +335,6 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                     </>
                   )}
                   <input
-                    ref={cameraRef}
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    className="hidden"
-                    onChange={handlePhotoUpload}
-                  />
-                  <input
                     ref={fileRef}
                     type="file"
                     accept="image/*"
