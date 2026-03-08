@@ -252,6 +252,33 @@ const RecipeEditor = () => {
                     </Badge>
                   );
                 })}
+                {tags.filter((t) => !PRESET_TAGS.includes(t as any)).map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="default"
+                    className="cursor-pointer transition-base select-none bg-brass text-primary-foreground hover:bg-brass/80"
+                    onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                  >
+                    {tag} ×
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex gap-2 mt-2">
+                <Input
+                  placeholder="Add custom tag…"
+                  className="border-brass/20 bg-background/50 focus-visible:ring-neon/40 max-w-[200px]"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const val = (e.target as HTMLInputElement).value.trim();
+                      if (val && !tags.includes(val)) {
+                        setTags((prev) => [...prev, val]);
+                        (e.target as HTMLInputElement).value = "";
+                      }
+                    }
+                  }}
+                />
+                <span className="text-xs text-muted-foreground self-center">Press Enter to add</span>
               </div>
             </div>
           </CardContent>
