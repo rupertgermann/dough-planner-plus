@@ -399,6 +399,7 @@ const Index = () => {
               </span>
             </div>
           )}
+          </>
         )}
       </main>
     </div>
