@@ -57,6 +57,7 @@ const RecipeEditor = () => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([emptyIngredient()]);
   const [steps, setSteps] = useState<BakingStep[]>([emptyStep()]);
 

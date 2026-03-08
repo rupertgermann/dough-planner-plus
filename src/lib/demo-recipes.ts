@@ -3,6 +3,7 @@ import { Recipe } from "@/types/recipe";
 export const DEMO_RECIPES: Recipe[] = [
   {
     id: "demo-1", name: "Classic Sourdough", description: "A crusty, tangy sourdough with an open crumb.",
+    tags: ["Sourdough"],
     ingredients: [
       { id: "i1", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i2", name: "Water", amount: "375", unit: "g" },
@@ -20,6 +21,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-2", name: "Overnight Focaccia", description: "Pillowy, olive-oil-drenched focaccia with crispy edges.",
+    tags: ["Flatbread"],
     ingredients: [
       { id: "i5", name: "All-purpose flour", amount: "500", unit: "g" },
       { id: "i6", name: "Water", amount: "400", unit: "g" },
@@ -37,6 +39,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-3", name: "French Brioche", description: "Rich, buttery brioche with a tender crumb.",
+    tags: ["Enriched", "Sweet"],
     ingredients: [
       { id: "i10", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i11", name: "Eggs", amount: "5", unit: "large" },
@@ -55,6 +58,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-4", name: "Rye Pumpernickel", description: "Dense, dark pumpernickel with deep malty flavor.",
+    tags: ["Rye", "Whole Grain"],
     ingredients: [
       { id: "i15", name: "Dark rye flour", amount: "400", unit: "g" },
       { id: "i16", name: "Bread flour", amount: "100", unit: "g" },
@@ -73,6 +77,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-5", name: "Ciabatta", description: "Airy Italian bread with huge holes and crispy crust.",
+    tags: [],
     ingredients: [
       { id: "i20", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i21", name: "Water", amount: "400", unit: "g" },
@@ -91,6 +96,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-6", name: "Pretzel Rolls", description: "Chewy, salty Bavarian-style pretzel rolls with a dark crust.",
+    tags: ["Rolls"],
     ingredients: [
       { id: "i25", name: "Bread flour", amount: "450", unit: "g" },
       { id: "i26", name: "Water", amount: "280", unit: "ml" },
@@ -109,6 +115,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-7", name: "Japanese Milk Bread", description: "Ultra-soft, fluffy shokupan using tangzhong method.",
+    tags: ["Enriched"],
     ingredients: [
       { id: "i30", name: "Bread flour", amount: "350", unit: "g" },
       { id: "i31", name: "Milk", amount: "200", unit: "ml" },
@@ -128,6 +135,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-8", name: "Pita Bread", description: "Puffy pocket pitas, perfect for stuffing or dipping.",
+    tags: ["Flatbread"],
     ingredients: [
       { id: "i35", name: "All-purpose flour", amount: "300", unit: "g" },
       { id: "i36", name: "Water", amount: "180", unit: "ml" },
@@ -146,6 +154,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-9", name: "Challah", description: "Beautiful braided egg bread, slightly sweet and golden.",
+    tags: ["Enriched", "Sweet"],
     ingredients: [
       { id: "i40", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i41", name: "Eggs", amount: "3", unit: "large" },
@@ -164,6 +173,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-10", name: "Naan Bread", description: "Soft, charred flatbread traditionally cooked in a tandoor.",
+    tags: ["Flatbread"],
     ingredients: [
       { id: "i45", name: "All-purpose flour", amount: "300", unit: "g" },
       { id: "i46", name: "Yogurt", amount: "100", unit: "g" },
@@ -182,6 +192,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-11", name: "Bagels", description: "Chewy, malty New York-style bagels with a shiny crust.",
+    tags: ["Rolls"],
     ingredients: [
       { id: "i50", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i51", name: "Water", amount: "300", unit: "ml" },
@@ -200,6 +211,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-12", name: "Cornbread", description: "Golden, slightly sweet Southern-style cornbread baked in a skillet.",
+    tags: ["Quick Bread"],
     ingredients: [
       { id: "i55", name: "Cornmeal", amount: "200", unit: "g" },
       { id: "i56", name: "All-purpose flour", amount: "100", unit: "g" },
@@ -216,6 +228,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-13", name: "English Muffins", description: "Nooks-and-crannies English muffins cooked on a griddle.",
+    tags: ["Rolls"],
     ingredients: [
       { id: "i60", name: "Bread flour", amount: "400", unit: "g" },
       { id: "i61", name: "Milk", amount: "250", unit: "ml" },
@@ -234,6 +247,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-14", name: "Banana Bread", description: "Moist, rich banana bread with walnuts and a crackly top.",
+    tags: ["Quick Bread", "Sweet"],
     ingredients: [
       { id: "i65", name: "Ripe bananas", amount: "4", unit: "large" },
       { id: "i66", name: "All-purpose flour", amount: "280", unit: "g" },
@@ -251,6 +265,7 @@ export const DEMO_RECIPES: Recipe[] = [
   },
   {
     id: "demo-15", name: "Croissants", description: "Flaky, buttery laminated croissants — a 2-day labor of love.",
+    tags: ["Enriched", "Sweet"],
     ingredients: [
       { id: "i70", name: "All-purpose flour", amount: "500", unit: "g" },
       { id: "i71", name: "Butter (block)", amount: "280", unit: "g" },

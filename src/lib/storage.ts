@@ -55,6 +55,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-brioche",
     name: "French Brioche",
     description: "Rich, buttery brioche with a tender crumb. Great for toast, French toast, or burger buns.",
+    tags: ["Enriched", "Sweet"],
     ingredients: [
       { id: "i11", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i12", name: "Eggs", amount: "5", unit: "large" },

@@ -100,6 +100,7 @@ const ImportRecipe = () => {
       id: generateId(),
       name: "Imported Recipe",
       description: "Imported from text",
+      tags: [],
       ingredients: parsed.ingredients,
       steps: parsed.steps,
       createdAt: new Date().toISOString(),
