@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical, ArrowUpDown } from "lucide-react";
+import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical, ArrowUpDown, Pencil, CalendarClock } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
 import { Button } from "@/components/ui/button";
