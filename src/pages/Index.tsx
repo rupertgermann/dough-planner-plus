@@ -174,6 +174,12 @@ const Index = () => {
                 </CardContent>
                 <CardFooter className="gap-2 pt-2 border-t border-border/50">
                   <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-all duration-300">
+                    <Link to={`/view/${recipe.id}`}>
+                      <Eye className="mr-1 h-3.5 w-3.5" />
+                      View
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-all duration-300">
                     <Link to={`/recipe/${recipe.id}`}>Edit</Link>
                   </Button>
                   <Button asChild size="sm" className="flex-1 bg-neon/10 text-neon border border-neon/20 hover:bg-neon/20 hover:border-neon/40 neon-border transition-all duration-300">
