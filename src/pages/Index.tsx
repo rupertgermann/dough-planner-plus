@@ -4,6 +4,7 @@ import { Plus, Search, Clock, Import, Trash2, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getRecipes, deleteRecipe } from "@/lib/storage";
 import { Recipe } from "@/types/recipe";
 
