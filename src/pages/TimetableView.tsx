@@ -65,7 +65,7 @@ const TimetableView = () => {
   if (!recipe) return null;
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
+    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
       {/* Decorative gears */}
       <div className="fixed top-[-50px] right-[-50px] opacity-[0.03] pointer-events-none">
         <Cog className="h-40 w-40 text-brass gear-slow" />
