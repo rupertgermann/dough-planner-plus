@@ -31,6 +31,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-focaccia",
     name: "Overnight Focaccia",
     description: "Pillowy, olive-oil-drenched focaccia with a crispy golden bottom. No kneading required.",
+    tags: ["Flatbread"],
     ingredients: [
       { id: "i5", name: "All-purpose flour", amount: "500", unit: "g" },
       { id: "i6", name: "Water", amount: "400", unit: "g" },
