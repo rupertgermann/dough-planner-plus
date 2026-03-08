@@ -228,6 +228,32 @@ const RecipeEditor = () => {
                 className="border-brass/20 bg-background/50 focus-visible:ring-neon/40"
               />
             </div>
+            <div>
+              <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">Tags</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {PRESET_TAGS.map((tag) => {
+                  const active = tags.includes(tag);
+                  return (
+                    <Badge
+                      key={tag}
+                      variant={active ? "default" : "outline"}
+                      className={`cursor-pointer transition-base select-none ${
+                        active
+                          ? "bg-brass text-primary-foreground hover:bg-brass/80"
+                          : "border-brass/30 text-muted-foreground hover:border-brass/60 hover:text-foreground"
+                      }`}
+                      onClick={() =>
+                        setTags((prev) =>
+                          active ? prev.filter((t) => t !== tag) : [...prev, tag]
+                        )
+                      }
+                    >
+                      {tag}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
