@@ -8,6 +8,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-sourdough",
     name: "Classic Sourdough",
     description: "A crusty, tangy sourdough with an open crumb. Perfect weekend bake using a mature levain.",
+    tags: ["Sourdough"],
     ingredients: [
       { id: "i1", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i2", name: "Water", amount: "375", unit: "g" },
@@ -30,6 +31,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-focaccia",
     name: "Overnight Focaccia",
     description: "Pillowy, olive-oil-drenched focaccia with a crispy golden bottom. No kneading required.",
+    tags: ["Flatbread"],
     ingredients: [
       { id: "i5", name: "All-purpose flour", amount: "500", unit: "g" },
       { id: "i6", name: "Water", amount: "400", unit: "g" },
@@ -53,6 +55,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-brioche",
     name: "French Brioche",
     description: "Rich, buttery brioche with a tender crumb. Great for toast, French toast, or burger buns.",
+    tags: ["Enriched", "Sweet"],
     ingredients: [
       { id: "i11", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i12", name: "Eggs", amount: "5", unit: "large" },

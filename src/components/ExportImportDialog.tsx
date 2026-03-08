@@ -53,7 +53,7 @@ export function ExportImportDialog({ onImported }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base">
+        <Button variant="outline" size="sm" className="border-brass/20 hover:border-brass/50 hover:bg-brass/5 hover:text-foreground transition-base">
           <Download className="mr-1 h-4 w-4" />
           Backup
         </Button>
