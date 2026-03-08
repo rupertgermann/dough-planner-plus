@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, Clock, Import, Trash2, Cog } from "lucide-react";
+import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { getRecipes, deleteRecipe } from "@/lib/storage";
+import { getRecipes, deleteRecipe, saveRecipe } from "@/lib/storage";
+import { DEMO_RECIPES } from "@/lib/demo-recipes";
 import { Recipe } from "@/types/recipe";
+
+const SHOW_DEMO_BUTTON = import.meta.env.VITE_HIDE_DEMO_BUTTON !== "true";
 
 const Index = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
