@@ -6,6 +6,66 @@
 
 @layer base {
   :root {
+    --background: 40 20% 95%;
+    --foreground: 225 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 225 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 15% 15%;
+
+    --primary: 38 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 38 15% 88%;
+    --secondary-foreground: 225 15% 25%;
+
+    --muted: 38 10% 90%;
+    --muted-foreground: 225 10% 45%;
+
+    --accent: 157 70% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 38 15% 82%;
+    --input: 38 15% 82%;
+    --ring: 38 85% 45%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 38 15% 92%;
+    --sidebar-foreground: 225 10% 35%;
+    --sidebar-primary: 38 85% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 38 10% 88%;
+    --sidebar-accent-foreground: 225 10% 35%;
+    --sidebar-border: 38 15% 82%;
+    --sidebar-ring: 38 85% 45%;
+
+    --neon: 157 70% 38%;
+    --neon-cyan: 185 70% 40%;
+    --brass: 38 85% 45%;
+    --copper: 22 65% 40%;
+    --ember: 15 80% 48%;
+    --violet-glow: 270 60% 55%;
+
+    --success: 152 69% 41%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 225 15% 15%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 98%;
+
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .dark {
     --background: 228 18% 6%;
     --foreground: 42 25% 90%;
 
@@ -34,8 +94,6 @@
     --input: 225 12% 18%;
     --ring: 38 85% 52%;
 
-    --radius: 0.75rem;
-
     --sidebar-background: 225 15% 8%;
     --sidebar-foreground: 42 18% 75%;
     --sidebar-primary: 38 85% 52%;
@@ -58,11 +116,6 @@
     --warning-foreground: 228 18% 6%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 98%;
-
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 

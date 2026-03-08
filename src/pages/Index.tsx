@@ -172,7 +172,7 @@ const Index = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="gap-2 pt-2 border-t border-border/50" onClick={(e) => e.preventDefault()}>
-                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base">
+                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 hover:text-foreground transition-base">
                     <Link to={`/recipe/${recipe.id}`}>Edit</Link>
                   </Button>
                   <Button asChild variant="ghost-neon" size="sm" className="flex-1">
