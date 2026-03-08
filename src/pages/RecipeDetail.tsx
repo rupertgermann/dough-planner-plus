@@ -103,9 +103,33 @@ const RecipeDetail = () => {
     }
   };
 
-  useKeyboardShortcuts(useMemo(() => [
-    { key: "p", ctrl: true, handler: () => handlePrint() },
-  ], []));
+  const handleDelete = () => {
+    if (!recipe) return;
+    deleteRecipe(recipe.id);
+    toast.success("Recipe deleted");
+    navigate("/");
+  };
+
+  // Arrow key navigation between recipes
+  useKeyboardShortcuts(useMemo(() => {
+    const allRecipes = getRecipes();
+    const currentIndex = allRecipes.findIndex((r) => r.id === id);
+    return [
+      { key: "p", ctrl: true, handler: () => handlePrint() },
+      {
+        key: "ArrowLeft",
+        handler: () => {
+          if (currentIndex > 0) navigate(`/view/${allRecipes[currentIndex - 1].id}`);
+        },
+      },
+      {
+        key: "ArrowRight",
+        handler: () => {
+          if (currentIndex < allRecipes.length - 1) navigate(`/view/${allRecipes[currentIndex + 1].id}`);
+        },
+      },
+    ];
+  }, [id, navigate]));
 
   const totalTime = recipe?.steps.reduce((sum, s) => sum + s.durationMinutes, 0) || 0;
   const hours = Math.floor(totalTime / 60);
