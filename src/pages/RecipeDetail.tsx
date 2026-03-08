@@ -88,7 +88,7 @@ const RecipeDetail = () => {
         <Cog className="h-32 w-32 text-brass gear-slow" />
       </div>
 
-      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl print:bg-[white] print:border-[#ddd]">
+      <header className="relative border-b border-brass/20 glass-heavy print:bg-[white] print:border-[#ddd]">
         <div className="absolute inset-x-0 bottom-0 divider-glow print:hidden" />
         <div className="container mx-auto flex items-center gap-4 px-4 py-6">
           <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10 print:hidden">
@@ -107,13 +107,13 @@ const RecipeDetail = () => {
           <div className="flex gap-2 print:hidden">
             <Button
               variant="outline"
-              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10"
+              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base"
               onClick={handlePrint}
             >
               <Printer className="mr-2 h-4 w-4" />
               Print
             </Button>
-            <Button asChild className="bg-primary text-primary-foreground">
+            <Button asChild variant="brass">
               <Link to={`/recipe/${id}`}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -125,7 +125,7 @@ const RecipeDetail = () => {
 
       <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8 relative z-10">
         {/* Summary */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground print:text-[#666]">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground font-mono-tech print:text-[#666]">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
             <span>
@@ -139,7 +139,7 @@ const RecipeDetail = () => {
         </div>
 
         {/* Ingredients */}
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md print:bg-[white] print:border-[#ddd] print:shadow-none">
+        <Card className="card-glow border-brass/15 glass print:bg-[white] print:border-[#ddd] print:shadow-none">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base text-gradient-brass print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
               Ingredients
@@ -150,12 +150,12 @@ const RecipeDetail = () => {
                 {[0.5, 1, 1.5, 2, 3].map((v) => (
                   <Button
                     key={v}
-                    variant={scale === v ? "default" : "outline"}
+                    variant={scale === v ? "ghost-neon" : "outline"}
                     size="sm"
                     className={
                       scale === v
-                        ? "h-7 px-2 text-xs bg-neon/20 text-neon border border-neon/40 hover:bg-neon/30"
-                        : "h-7 px-2 text-xs border-brass/20 hover:border-brass/50 hover:bg-brass/5"
+                        ? "h-7 px-2 text-xs bg-neon/20"
+                        : "h-7 px-2 text-xs border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base"
                     }
                     onClick={() => setScale(v)}
                   >
@@ -179,12 +179,12 @@ const RecipeDetail = () => {
 
                 return (
                   <li key={ing.id} className="flex items-baseline gap-2">
-                    <span className="font-medium text-foreground print:text-[black]">
+                    <span className="font-medium text-foreground font-mono-tech print:text-[black]">
                       {scaledAmount} {ing.unit}
                     </span>
                     <span className="text-muted-foreground print:text-[#444]">{ing.name}</span>
                     {ing.percentage && (
-                      <span className="ml-auto text-xs text-neon print:text-[#666]">
+                      <span className="ml-auto text-xs text-neon font-mono-tech print:text-[#666]">
                         ({ing.percentage}%)
                       </span>
                     )}
@@ -196,7 +196,7 @@ const RecipeDetail = () => {
         </Card>
 
         {/* Timetable Configuration */}
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md print:bg-[white] print:border-[#ddd] print:shadow-none">
+        <Card className="card-glow border-brass/15 glass print:bg-[white] print:border-[#ddd] print:shadow-none">
           <CardHeader>
             <CardTitle className="text-base text-gradient-brass print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
               Timetable
@@ -205,7 +205,7 @@ const RecipeDetail = () => {
           <CardContent>
             <div className="flex flex-wrap items-end gap-4 mb-6 print:hidden">
               <div>
-                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Ready date</Label>
+                <Label className="text-xs text-muted-foreground uppercase tracking-wider font-mono-tech">Ready date</Label>
                 <Input
                   type="date"
                   value={readyDate}
@@ -214,7 +214,7 @@ const RecipeDetail = () => {
                 />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground uppercase tracking-wider">Ready time</Label>
+                <Label className="text-xs text-muted-foreground uppercase tracking-wider font-mono-tech">Ready time</Label>
                 <Input
                   type="time"
                   value={readyTime}
@@ -248,7 +248,7 @@ const RecipeDetail = () => {
                 {timeline.map(({ step, startTime }, i) => (
                   <div key={step.id} className="relative flex gap-4 pb-4 group">
                     <div className="w-[80px] shrink-0 pt-3 text-right">
-                      <span className="text-sm font-semibold font-mono text-foreground print:text-[black]">
+                      <span className="text-sm font-semibold font-mono-tech text-foreground print:text-[black]">
                         {formatTime(startTime)}
                       </span>
                     </div>
@@ -258,7 +258,7 @@ const RecipeDetail = () => {
                     <div className="flex-1 pt-2">
                       <div className="flex items-center gap-2">
                         <h3 className="font-medium text-foreground print:text-[black]">{step.name}</h3>
-                        <span className="text-xs text-brass print:text-[#666]">
+                        <span className="text-xs text-brass font-mono-tech print:text-[#666]">
                           ({formatDuration(step.durationMinutes)})
                         </span>
                       </div>
@@ -274,7 +274,7 @@ const RecipeDetail = () => {
                 {/* Ready marker */}
                 <div className="relative flex gap-4">
                   <div className="w-[80px] shrink-0 pt-3 text-right">
-                    <span className="text-sm font-bold font-mono text-neon neon-glow print:text-[black] print:[text-shadow:none]">
+                    <span className="text-sm font-bold font-mono-tech text-neon neon-glow print:text-[black] print:[text-shadow:none]">
                       {readyTime}
                     </span>
                   </div>

@@ -134,7 +134,6 @@ const RecipeEditor = () => {
 
   // Calculate baker's percentages based on total flour weight
   const calculateBakersPercentages = () => {
-    // Find all flour ingredients and sum their weights
     const flourIngredients = ingredients.filter((ing) =>
       FLOUR_KEYWORDS.some((kw) => ing.name.toLowerCase().includes(kw))
     );
@@ -154,7 +153,6 @@ const RecipeEditor = () => {
       return;
     }
 
-    // Calculate percentage for each ingredient: (ingredient weight / flour weight) * 100
     const updated = ingredients.map((ing) => {
       const amount = parseFloat(ing.amount);
       if (isNaN(amount) || amount <= 0) {
@@ -174,7 +172,7 @@ const RecipeEditor = () => {
         <Cog className="h-32 w-32 text-brass gear-slow" />
       </div>
 
-      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl">
+      <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
         <div className="container mx-auto flex items-center gap-4 px-4 py-6">
           <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10">
@@ -187,7 +185,7 @@ const RecipeEditor = () => {
               {isNew ? "New Recipe" : "Edit Recipe"}
             </h1>
           </div>
-          <Button onClick={handleSave} className="bg-primary text-primary-foreground font-semibold hover:bg-primary/90 hover:scale-105 transition-transform duration-300">
+          <Button onClick={handleSave} variant="brass" className="hover:scale-105 transition-base">
             Save Recipe
           </Button>
         </div>
@@ -195,13 +193,13 @@ const RecipeEditor = () => {
 
       <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8 relative z-10">
         {/* Basic Info */}
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
+        <Card className="card-glow border-brass/15 glass">
           <CardHeader>
             <CardTitle className="text-base text-gradient-brass">Basic Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="name" className="text-xs uppercase tracking-wider text-muted-foreground">Recipe Name</Label>
+              <Label htmlFor="name" className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">Recipe Name</Label>
               <Input
                 id="name"
                 placeholder="e.g. Sourdough Boule"
@@ -211,7 +209,7 @@ const RecipeEditor = () => {
               />
             </div>
             <div>
-              <Label htmlFor="desc" className="text-xs uppercase tracking-wider text-muted-foreground">Description</Label>
+              <Label htmlFor="desc" className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">Description</Label>
               <Textarea
                 id="desc"
                 placeholder="A short description of the bread…"
@@ -225,16 +223,15 @@ const RecipeEditor = () => {
         </Card>
 
         {/* Ingredients */}
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
+        <Card className="card-glow border-brass/15 glass">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base text-gradient-brass">Ingredients</CardTitle>
             <div className="flex gap-2">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="outline"
+                    variant="ghost-neon"
                     size="sm"
-                    className="border-neon/30 hover:border-neon/60 hover:bg-neon/10 transition-all duration-300"
                     onClick={calculateBakersPercentages}
                   >
                     <Calculator className="mr-1 h-3.5 w-3.5" />
@@ -248,7 +245,7 @@ const RecipeEditor = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300"
+                className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base"
                 onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
               >
                 <Plus className="mr-1 h-3.5 w-3.5" />
@@ -257,7 +254,7 @@ const RecipeEditor = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2 font-mono-tech">
               <span className="w-4" />
               <span className="w-20">Amount</span>
               <span className="w-16">Unit</span>
@@ -266,7 +263,7 @@ const RecipeEditor = () => {
             </div>
             {ingredients.map((ing, i) => (
               <div key={ing.id} className="flex items-center gap-2 group">
-                <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground/30 group-hover:text-brass/50 transition-colors" />
+                <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground/30 group-hover:text-brass/50 transition-base" />
                 <Input
                   placeholder="Amt"
                   value={ing.amount}
@@ -283,7 +280,7 @@ const RecipeEditor = () => {
                   placeholder="%"
                   value={ing.percentage || ""}
                   onChange={(e) => updateIngredient(i, "percentage", e.target.value)}
-                  className="w-16 border-brass/15 bg-background/40 focus-visible:ring-neon/40 text-neon"
+                  className="w-16 border-brass/15 bg-background/40 focus-visible:ring-neon/40 text-neon font-mono-tech"
                   title="Baker's percentage"
                 />
                 <Input
@@ -295,7 +292,7 @@ const RecipeEditor = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
+                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
                   onClick={() =>
                     setIngredients((prev) => prev.filter((_, j) => j !== i))
                   }
@@ -308,13 +305,13 @@ const RecipeEditor = () => {
         </Card>
 
         {/* Steps with Drag & Drop */}
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
+        <Card className="card-glow border-brass/15 glass">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base text-gradient-brass">Baking Steps</CardTitle>
             <Button
               variant="outline"
               size="sm"
-              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300"
+              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base"
               onClick={() => setSteps((prev) => [...prev, emptyStep()])}
             >
               <Plus className="mr-1 h-3.5 w-3.5" />

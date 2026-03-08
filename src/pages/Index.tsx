@@ -53,7 +53,7 @@ const Index = () => {
         <Cog className="h-36 w-36 text-neon gear-reverse" />
       </div>
 
-      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl">
+      <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
         <div className="container mx-auto flex items-center justify-between px-4 py-6">
           <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ const Index = () => {
               <h1 className="text-2xl font-bold text-gradient-brass tracking-tight">
                 Bread Planner
               </h1>
-              <p className="text-xs text-muted-foreground tracking-widest uppercase">
+              <p className="text-xs text-muted-foreground tracking-widest uppercase font-mono-tech">
                 Recipes & Timetables
               </p>
             </div>
@@ -73,22 +73,21 @@ const Index = () => {
           <div className="flex gap-2">
             {SHOW_DEMO_BUTTON && (
               <Button
-                variant="outline"
+                variant="ghost-neon"
                 size="sm"
-                className="border-neon/30 hover:border-neon/60 hover:bg-neon/10 text-neon transition-all duration-300"
                 onClick={handleLoadDemos}
               >
                 <FlaskConical className="mr-1 h-4 w-4" />
                 Load Demos
               </Button>
             )}
-            <Button asChild variant="outline" size="sm" className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300">
+            <Button asChild variant="outline" size="sm" className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base">
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
                 Import
               </Link>
             </Button>
-            <Button asChild size="sm" className="brass-shimmer text-primary-foreground font-semibold brass-glow hover:scale-105 transition-transform duration-300">
+            <Button asChild variant="brass" size="sm" className="hover:scale-105 transition-base">
               <Link to="/recipe/new">
                 <Plus className="mr-1 h-4 w-4" />
                 Add Recipe
@@ -102,12 +101,12 @@ const Index = () => {
         {recipes.length > 0 && (
           <div className="mb-8 max-w-sm">
             <div className="relative group">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-neon" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-base group-focus-within:text-neon" />
               <Input
                 placeholder="Search recipes…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 border-brass/20 bg-card/50 backdrop-blur-sm focus-visible:ring-neon/40 focus-visible:border-neon/30 transition-all duration-300"
+                className="pl-9 border-brass/20 bg-card/50 backdrop-blur-sm focus-visible:ring-neon/40 focus-visible:border-neon/30 transition-base"
               />
             </div>
           </div>
@@ -126,13 +125,13 @@ const Index = () => {
               Fire up the workshop — add your first bread recipe or import one.
             </p>
             <div className="flex gap-3">
-              <Button asChild variant="outline" className="border-brass/30 hover:border-brass/60 transition-all duration-300">
+              <Button asChild variant="outline" className="border-brass/30 hover:border-brass/60 transition-base">
                 <Link to="/import">
                   <Import className="mr-1 h-4 w-4" />
                   Import Recipe
                 </Link>
               </Button>
-              <Button asChild className="brass-shimmer text-primary-foreground font-semibold brass-glow">
+              <Button asChild variant="brass">
                 <Link to="/recipe/new">
                   <Plus className="mr-1 h-4 w-4" />
                   Add Recipe
@@ -143,10 +142,9 @@ const Index = () => {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((recipe, i) => (
-              <Link to={`/view/${recipe.id}`} className="block">
+              <Link to={`/view/${recipe.id}`} className="block" key={recipe.id}>
               <Card
-                key={recipe.id}
-                className="group card-glow card-hover border-brass/10 bg-card/50 backdrop-blur-md cursor-pointer"
+                className="group card-glow card-hover border-brass/10 glass cursor-pointer"
                 style={{ animationDelay: `${i * 80}ms` }}
               >
                 <CardHeader className="pb-2">
@@ -156,7 +154,7 @@ const Index = () => {
                   <p className="line-clamp-2 text-sm text-muted-foreground">
                     {recipe.description || "No description"}
                   </p>
-                  <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+                  <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground font-mono-tech">
                     <span className="flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5 text-neon" />
                       <span className="text-gradient-neon font-medium">
@@ -174,10 +172,10 @@ const Index = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="gap-2 pt-2 border-t border-border/50" onClick={(e) => e.preventDefault()}>
-                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-all duration-300">
+                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base">
                     <Link to={`/recipe/${recipe.id}`}>Edit</Link>
                   </Button>
-                  <Button asChild size="sm" className="flex-1 bg-neon/10 text-neon border border-neon/20 hover:bg-neon/20 hover:border-neon/40 neon-border transition-all duration-300">
+                  <Button asChild variant="ghost-neon" size="sm" className="flex-1">
                     <Link to={`/timetable/${recipe.id}`}>Timetable</Link>
                   </Button>
                   <AlertDialog>
@@ -185,12 +183,12 @@ const Index = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="border-brass/20 bg-card backdrop-blur-xl">
+                    <AlertDialogContent className="border-brass/20 glass-heavy">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-gradient-brass">Delete "{recipe.name}"?</AlertDialogTitle>
                         <AlertDialogDescription>
