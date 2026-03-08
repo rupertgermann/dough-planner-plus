@@ -117,7 +117,7 @@ const ImportRecipe = () => {
         <Cog className="h-36 w-36 text-neon gear-reverse" />
       </div>
 
-      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl">
+      <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
         <div className="container mx-auto flex items-center gap-4 px-4 py-6">
           <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10">
@@ -127,7 +127,7 @@ const ImportRecipe = () => {
           </Button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-gradient-brass">Import Recipe</h1>
-            <p className="text-xs text-muted-foreground tracking-widest uppercase">
+            <p className="text-xs text-muted-foreground tracking-widest uppercase font-mono-tech">
               Paste text · Auto-parse · Save
             </p>
           </div>
@@ -135,13 +135,13 @@ const ImportRecipe = () => {
       </header>
 
       <main className="container mx-auto max-w-2xl space-y-6 px-4 py-8 relative z-10">
-        <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
+        <Card className="card-glow border-brass/15 glass">
           <CardHeader>
             <CardTitle className="text-base text-gradient-brass">Paste Recipe Text</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-xs text-muted-foreground uppercase tracking-wider">
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider font-mono-tech">
                 Tip: Include "Ingredients" and "Instructions" headers for best results
               </Label>
               <Textarea
@@ -149,10 +149,10 @@ const ImportRecipe = () => {
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 rows={12}
-                className="mt-2 font-mono text-sm border-brass/15 bg-background/40 focus-visible:ring-neon/40"
+                className="mt-2 font-mono-tech text-sm border-brass/15 bg-background/40 focus-visible:ring-neon/40"
               />
             </div>
-            <Button onClick={handleParse} className="w-full brass-shimmer text-primary-foreground font-semibold brass-glow hover:scale-[1.02] transition-transform duration-300">
+            <Button onClick={handleParse} variant="brass" className="w-full hover:scale-[1.02] transition-base">
               <Sparkles className="mr-2 h-4 w-4" />
               Parse Recipe
             </Button>
@@ -161,7 +161,7 @@ const ImportRecipe = () => {
 
         {parsed && (
           <>
-            <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
+            <Card className="card-glow border-brass/15 glass">
               <CardHeader>
                 <CardTitle className="text-base text-gradient-brass">
                   Parsed Ingredients ({parsed.ingredients.length})
@@ -172,7 +172,7 @@ const ImportRecipe = () => {
                   {parsed.ingredients.map((ing) => (
                     <li key={ing.id} className="flex items-center gap-2 text-muted-foreground">
                       <span className="h-1.5 w-1.5 rounded-full bg-brass/60" />
-                      <span className="font-medium text-foreground font-mono">
+                      <span className="font-medium text-foreground font-mono-tech">
                         {ing.amount} {ing.unit}
                       </span>{" "}
                       {ing.name}
@@ -182,7 +182,7 @@ const ImportRecipe = () => {
               </CardContent>
             </Card>
 
-            <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
+            <Card className="card-glow border-brass/15 glass">
               <CardHeader>
                 <CardTitle className="text-base text-gradient-brass">
                   Parsed Steps ({parsed.steps.length})
@@ -192,13 +192,13 @@ const ImportRecipe = () => {
                 <ol className="space-y-3 text-sm">
                   {parsed.steps.map((step, i) => (
                     <li key={step.id} className="flex gap-3">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-[10px] font-bold text-neon">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-[10px] font-bold text-neon font-mono-tech">
                         {i + 1}
                       </span>
                       <div>
                         <span className="text-foreground">{step.instructions}</span>
                         {step.durationMinutes > 0 && (
-                          <span className="ml-2 text-xs text-neon font-medium">
+                          <span className="ml-2 text-xs text-neon font-medium font-mono-tech">
                             ({step.durationMinutes} min)
                           </span>
                         )}
@@ -209,7 +209,7 @@ const ImportRecipe = () => {
               </CardContent>
             </Card>
 
-            <Button onClick={handleSave} size="lg" className="w-full brass-shimmer text-primary-foreground font-semibold brass-glow hover:scale-[1.02] transition-transform duration-300">
+            <Button onClick={handleSave} variant="brass" size="lg" className="w-full hover:scale-[1.02] transition-base">
               Save & Edit Recipe
             </Button>
           </>

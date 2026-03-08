@@ -71,7 +71,7 @@ const TimetableView = () => {
         <Cog className="h-40 w-40 text-brass gear-slow" />
       </div>
 
-      <header className="relative border-b border-brass/20 bg-card/60 backdrop-blur-xl">
+      <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
         <div className="container mx-auto flex items-center gap-4 px-4 py-6">
           <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10">
@@ -81,7 +81,7 @@ const TimetableView = () => {
           </Button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-gradient-brass">{recipe.name}</h1>
-            <p className="text-xs text-muted-foreground flex items-center gap-1.5 tracking-widest uppercase">
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5 tracking-widest uppercase font-mono-tech">
               <Cog className="h-3 w-3 text-neon gear-slow" /> Baking Timetable
             </p>
           </div>
@@ -90,10 +90,10 @@ const TimetableView = () => {
 
       <main className="container mx-auto max-w-2xl px-4 py-8 relative z-10">
         {/* Time Picker */}
-        <Card className="mb-8 card-glow border-brass/15 bg-card/50 backdrop-blur-md">
+        <Card className="mb-8 card-glow border-brass/15 glass">
           <CardContent className="flex flex-wrap items-end gap-4 p-5">
             <div>
-              <Label className="text-xs text-muted-foreground uppercase tracking-wider">Ready date</Label>
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider font-mono-tech">Ready date</Label>
               <Input
                 type="date"
                 value={readyDate}
@@ -102,7 +102,7 @@ const TimetableView = () => {
               />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground uppercase tracking-wider">Ready time</Label>
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider font-mono-tech">Ready time</Label>
               <Input
                 type="time"
                 value={readyTime}
@@ -138,7 +138,7 @@ const TimetableView = () => {
               <div key={step.id} className="relative flex gap-4 pb-6 group">
                 {/* Time column */}
                 <div className="w-[80px] shrink-0 pt-3 text-right">
-                  <span className="text-sm font-semibold font-mono text-foreground">
+                  <span className="text-sm font-semibold font-mono-tech text-foreground">
                     {formatTime(startTime)}
                   </span>
                 </div>
@@ -146,11 +146,11 @@ const TimetableView = () => {
                 {/* Dot with pulse */}
                 <div className="relative z-10 mt-3.5 shrink-0">
                   <div className="h-3 w-3 rounded-full border-2 border-neon bg-card shadow-[0_0_8px_hsl(157_100%_49%/0.5)]" />
-                  <div className="absolute inset-0 h-3 w-3 rounded-full bg-neon/30 blur-sm group-hover:bg-neon/50 transition-all duration-300" />
+                  <div className="absolute inset-0 h-3 w-3 rounded-full bg-neon/30 blur-sm group-hover:bg-neon/50 transition-base" />
                 </div>
 
                 {/* Card */}
-                <Card className="flex-1 card-glow card-hover border-brass/10 bg-card/50 backdrop-blur-md">
+                <Card className="flex-1 card-glow card-hover border-brass/10 glass">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between gap-2">
                       <div>
@@ -161,7 +161,7 @@ const TimetableView = () => {
                           </p>
                         )}
                       </div>
-                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-neon/10 border border-neon/20 px-2.5 py-1 text-xs font-medium text-neon neon-border">
+                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-neon/10 border border-neon/20 px-2.5 py-1 text-xs font-medium text-neon neon-border font-mono-tech">
                         <Clock className="h-3 w-3" />
                         {formatDuration(step.durationMinutes)}
                       </span>
@@ -174,7 +174,7 @@ const TimetableView = () => {
             {/* Ready marker */}
             <div className="relative flex gap-4">
               <div className="w-[80px] shrink-0 pt-3 text-right">
-                <span className="text-sm font-bold font-mono text-neon neon-glow">
+                <span className="text-sm font-bold font-mono-tech text-neon neon-glow">
                   {readyTime}
                 </span>
               </div>
