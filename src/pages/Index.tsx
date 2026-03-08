@@ -309,16 +309,6 @@ const Index = () => {
                             </TooltipTrigger>
                             <TooltipContent><p>Timetable</p></TooltipContent>
                           </Tooltip>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-brass/10 transition-base"
-                                onClick={() => handleDuplicate(recipe.id)}
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent><p>Duplicate</p></TooltipContent>
-                          </Tooltip>
                           <AlertDialog>
                             <Tooltip>
                               <TooltipTrigger asChild>
