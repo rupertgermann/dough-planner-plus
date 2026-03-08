@@ -87,6 +87,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
   const [ovenSpring, setOvenSpring] = useState(3);
   const [photos, setPhotos] = useState<string[]>([]);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const entries = recipe.bakeLog || [];
