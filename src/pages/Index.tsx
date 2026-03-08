@@ -204,8 +204,8 @@ const Index = () => {
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="relative mb-6">
-              <Cog className="h-20 w-20 text-brass/30 gear-slow" />
-              <Cog className="absolute top-6 left-12 h-12 w-12 text-neon/20 gear-reverse" />
+              <Wheat className="h-20 w-20 text-brass/30" />
+              <Wheat className="absolute top-6 left-12 h-12 w-12 text-neon/20 -rotate-45" />
             </div>
             <h2 className="mb-2 text-2xl font-semibold text-gradient-brass">
               {recipes.length > 0 ? "No matches" : "No recipes yet"}
