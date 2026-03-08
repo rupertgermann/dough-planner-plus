@@ -11,6 +11,10 @@ import { Recipe } from "@/types/recipe";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BakeLog } from "@/components/BakeLog";
+import { HydrationBadge } from "@/components/HydrationBadge";
+import { DDTCalculator } from "@/components/DDTCalculator";
+import { BatchCost } from "@/components/BatchCost";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 const FLOUR_KEYWORDS = ["flour", "mehl", "farine", "harina"];
