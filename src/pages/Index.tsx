@@ -80,6 +80,12 @@ const Index = () => {
     return result;
   }, [recipes, search, activeTag, sortBy]);
 
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [search, activeTag, sortBy]);
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const handleDelete = (id: string) => {
     deleteRecipe(id);
     setRecipes(getRecipes());
