@@ -122,6 +122,49 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const openWebcam = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 } },
+      });
+      streamRef.current = stream;
+      setShowWebcam(true);
+      // attach stream after dialog renders
+      requestAnimationFrame(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      });
+    } catch {
+      toast.error("Could not access camera — check browser permissions");
+    }
+  }, []);
+
+  const closeWebcam = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    setShowWebcam(false);
+  }, []);
+
+  const captureWebcam = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")!.drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+    setPhotos((prev) => [...prev, dataUrl].slice(0, MAX_PHOTOS));
+    closeWebcam();
+  }, [closeWebcam]);
+
+  // cleanup stream on unmount
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
+
   const handleAdd = () => {
     if (!notes.trim()) {
       toast.error("Please add some notes about your bake");
