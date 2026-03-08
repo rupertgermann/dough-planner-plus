@@ -90,12 +90,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
-      {/* Decorative gears */}
-      <div className="fixed top-[-60px] right-[-60px] opacity-[0.04] pointer-events-none">
-        <Cog className="h-48 w-48 text-brass gear-slow" />
+      {/* Decorative wheat */}
+      <div className="fixed top-[-60px] right-[-60px] opacity-[0.04] pointer-events-none rotate-12">
+        <Wheat className="h-48 w-48 text-brass" />
       </div>
-      <div className="fixed bottom-[-40px] left-[-40px] opacity-[0.03] pointer-events-none">
-        <Cog className="h-36 w-36 text-neon gear-reverse" />
+      <div className="fixed bottom-[-40px] left-[-40px] opacity-[0.03] pointer-events-none -rotate-12">
+        <Wheat className="h-36 w-36 text-neon" />
       </div>
 
       <header className="relative border-b border-brass/20 glass-heavy">
