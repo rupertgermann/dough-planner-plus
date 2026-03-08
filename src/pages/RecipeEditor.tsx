@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Plus, Trash2, GripVertical, Cog, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
