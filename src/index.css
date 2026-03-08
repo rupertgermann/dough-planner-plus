@@ -258,4 +258,38 @@
   .floating {
     animation: float 6s ease-in-out infinite;
   }
+
+  .font-mono-tech {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  .glass {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-heavy {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+
+  .transition-fast {
+    transition: all var(--transition-fast);
+  }
+
+  .transition-base {
+    transition: all var(--transition-base);
+  }
+
+  .transition-slow {
+    transition: all var(--transition-slow);
+  }
+
+  .transition-spring {
+    transition: all var(--transition-spring);
+  }
 }
