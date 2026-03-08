@@ -38,6 +38,11 @@ const Index = () => {
     setRecipes(getRecipes());
   };
 
+  const handleLoadDemos = () => {
+    DEMO_RECIPES.forEach((r) => saveRecipe(r));
+    setRecipes(getRecipes());
+  };
+
   return (
     <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
       {/* Decorative gears */}
