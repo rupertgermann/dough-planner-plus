@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical } from "lucide-react";
+import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -173,6 +173,12 @@ const Index = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="gap-2 pt-2 border-t border-border/50">
+                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-all duration-300">
+                    <Link to={`/view/${recipe.id}`}>
+                      <Eye className="mr-1 h-3.5 w-3.5" />
+                      View
+                    </Link>
+                  </Button>
                   <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-all duration-300">
                     <Link to={`/recipe/${recipe.id}`}>Edit</Link>
                   </Button>
