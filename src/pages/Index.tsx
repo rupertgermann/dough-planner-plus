@@ -35,6 +35,8 @@ const Index = () => {
   const [search, setSearch] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>("name");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 15;
 
   useEffect(() => {
     setRecipes(getRecipes());
@@ -77,6 +79,12 @@ const Index = () => {
 
     return result;
   }, [recipes, search, activeTag, sortBy]);
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [search, activeTag, sortBy]);
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const handleDelete = (id: string) => {
     deleteRecipe(id);
@@ -245,8 +253,9 @@ const Index = () => {
             )}
           </div>
         ) : (
+          <>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((recipe, i) => (
+            {paginated.map((recipe, i) => (
               <Link to={`/view/${recipe.id}`} className="block" key={recipe.id}>
                 <Card
                   className="group card-glow card-hover border-brass/10 glass cursor-pointer"
@@ -350,6 +359,47 @@ const Index = () => {
               </Link>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                ← Prev
+              </Button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <Button
+                    key={p}
+                    variant={p === page ? "brass" : "ghost"}
+                    size="sm"
+                    className={`h-8 w-8 p-0 font-mono-tech ${p !== page ? "text-muted-foreground hover:text-foreground" : ""}`}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next →
+              </Button>
+              <span className="text-xs text-muted-foreground font-mono-tech ml-2">
+                {filtered.length} recipe{filtered.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          )}
+          </>
         )}
       </main>
     </div>
