@@ -111,25 +111,25 @@ const Index = () => {
 
       <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
-        <div className="container mx-auto flex items-center justify-between px-4 py-6">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4 sm:py-6 gap-3 flex-wrap">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Wheat className="h-8 w-8 text-neon" />
-              <div className="absolute inset-0 h-8 w-8 rounded-full bg-neon/20 blur-md" />
+              <Wheat className="h-7 w-7 sm:h-8 sm:w-8 text-neon" />
+              <div className="absolute inset-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-neon/20 blur-md" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gradient-brass tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold text-gradient-brass tracking-tight">
                 Bread Planner
               </h1>
-              <p className="text-xs text-muted-foreground tracking-widest uppercase font-mono-tech">
+              <p className="text-xs text-muted-foreground tracking-widest uppercase font-mono-tech hidden sm:block">
                 Recipes & Timetables
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <ThemeToggle />
             {SHOW_DEMO_BUTTON && (
-              <Button variant="ghost-neon" size="sm" onClick={handleLoadDemos}>
+              <Button variant="ghost-neon" size="sm" onClick={handleLoadDemos} className="hidden sm:flex">
                 <FlaskConical className="mr-1 h-4 w-4" />
                 Load Demos
               </Button>
@@ -138,13 +138,14 @@ const Index = () => {
             <Button asChild variant="outline" size="sm" className={btnOutlineClass}>
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
-                Import
+                <span className="hidden sm:inline">Import</span>
               </Link>
             </Button>
             <Button asChild variant="brass" size="sm" className="hover:scale-105 transition-base">
               <Link to="/recipe/new">
                 <Plus className="mr-1 h-4 w-4" />
-                Add Recipe
+                <span className="hidden sm:inline">Add Recipe</span>
+                <span className="sm:hidden">Add</span>
               </Link>
             </Button>
           </div>
