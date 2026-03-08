@@ -93,6 +93,7 @@ const RecipeEditor = () => {
       id: isNew ? generateId() : id!,
       name: name.trim(),
       description: description.trim(),
+      tags,
       ingredients: ingredients.filter((i) => i.name.trim()),
       steps: steps.filter((s) => s.name.trim()),
       createdAt: isNew ? new Date().toISOString() : getRecipe(id!)?.createdAt || new Date().toISOString(),
