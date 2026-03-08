@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical, ArrowUpDown } from "lucide-react";
+import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical, ArrowUpDown, Pencil, CalendarClock } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
 import { Button } from "@/components/ui/button";
@@ -274,44 +274,48 @@ const Index = () => {
                         <span className="h-1 w-1 rounded-full bg-brass/50" />
                         {recipe.steps.length} step{recipe.steps.length !== 1 ? "s" : ""}
                       </span>
+                      <span className="ml-auto flex items-center gap-1" onClick={(e) => e.preventDefault()}>
+                        <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-brass/10 transition-base">
+                          <Link to={`/recipe/${recipe.id}`}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
+                        <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-neon hover:bg-neon/10 transition-base">
+                          <Link to={`/timetable/${recipe.id}`}>
+                            <CalendarClock className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="border-brass/20 glass-heavy">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className="text-gradient-brass">Delete "{recipe.name}"?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This recipe and all its data will be permanently removed.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="border-brass/20">Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(recipe.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </span>
                     </div>
                   </CardContent>
-                  <CardFooter className="gap-2 pt-2 border-t border-border/50" onClick={(e) => e.preventDefault()}>
-                    <Button asChild variant="outline" size="sm" className={`flex-1 ${btnOutlineClass}`}>
-                      <Link to={`/recipe/${recipe.id}`}>Edit</Link>
-                    </Button>
-                    <Button asChild variant="ghost-neon" size="sm" className="flex-1">
-                      <Link to={`/timetable/${recipe.id}`}>Timetable</Link>
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="border-brass/20 glass-heavy">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-gradient-brass">Delete "{recipe.name}"?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This recipe and all its data will be permanently removed.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="border-brass/20">Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDelete(recipe.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </CardFooter>
                 </Card>
               </Link>
             ))}
