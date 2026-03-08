@@ -1,18 +1,19 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { Plus, Search, Clock, Import, Trash2, Wheat, FlaskConical, ArrowUpDown, Pencil, CalendarClock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus, Search, Clock, Import, Trash2, Wheat, FlaskConical, ArrowUpDown, Pencil, CalendarClock, Copy } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { getRecipes, deleteRecipe, saveRecipe } from "@/lib/storage";
+import { getRecipes, deleteRecipe, saveRecipe, duplicateRecipe } from "@/lib/storage";
 import { DEMO_RECIPES } from "@/lib/demo-recipes";
 import { Recipe, PRESET_TAGS } from "@/types/recipe";
+import { toast } from "sonner";
 
 const SHOW_DEMO_BUTTON = import.meta.env.VITE_HIDE_DEMO_BUTTON !== "true";
 
@@ -29,6 +30,7 @@ const formatDuration = (mins: number) => {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [search, setSearch] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
@@ -81,8 +83,17 @@ const Index = () => {
     setRecipes(getRecipes());
   };
 
+  const handleDuplicate = (id: string) => {
+    const dup = duplicateRecipe(id);
+    if (dup) {
+      toast.success(`Duplicated as "${dup.name}"`);
+      setRecipes(getRecipes());
+      navigate(`/recipe/${dup.id}`);
+    }
+  };
+
   const handleLoadDemos = () => {
-    DEMO_RECIPES.forEach((r) => saveRecipe(r));
+    DEMO_RECIPES.forEach((r) => saveRecipe({ ...r, bakeLog: [] }));
     setRecipes(getRecipes());
   };
 
@@ -100,25 +111,25 @@ const Index = () => {
 
       <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
-        <div className="container mx-auto flex items-center justify-between px-4 py-6">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4 sm:py-6 gap-3 flex-wrap">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Wheat className="h-8 w-8 text-neon" />
-              <div className="absolute inset-0 h-8 w-8 rounded-full bg-neon/20 blur-md" />
+              <Wheat className="h-7 w-7 sm:h-8 sm:w-8 text-neon" />
+              <div className="absolute inset-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-neon/20 blur-md" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gradient-brass tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold text-gradient-brass tracking-tight">
                 Bread Planner
               </h1>
-              <p className="text-xs text-muted-foreground tracking-widest uppercase font-mono-tech">
+              <p className="text-xs text-muted-foreground tracking-widest uppercase font-mono-tech hidden sm:block">
                 Recipes & Timetables
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <ThemeToggle />
             {SHOW_DEMO_BUTTON && (
-              <Button variant="ghost-neon" size="sm" onClick={handleLoadDemos}>
+              <Button variant="ghost-neon" size="sm" onClick={handleLoadDemos} className="hidden sm:flex">
                 <FlaskConical className="mr-1 h-4 w-4" />
                 Load Demos
               </Button>
@@ -127,13 +138,14 @@ const Index = () => {
             <Button asChild variant="outline" size="sm" className={btnOutlineClass}>
               <Link to="/import">
                 <Import className="mr-1 h-4 w-4" />
-                Import
+                <span className="hidden sm:inline">Import</span>
               </Link>
             </Button>
             <Button asChild variant="brass" size="sm" className="hover:scale-105 transition-base">
               <Link to="/recipe/new">
                 <Plus className="mr-1 h-4 w-4" />
-                Add Recipe
+                <span className="hidden sm:inline">Add Recipe</span>
+                <span className="sm:hidden">Add</span>
               </Link>
             </Button>
           </div>
@@ -296,6 +308,16 @@ const Index = () => {
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent><p>Timetable</p></TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-brass/10 transition-base"
+                                onClick={() => handleDuplicate(recipe.id)}
+                              >
+                                <Copy className="h-3.5 w-3.5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent><p>Duplicate</p></TooltipContent>
                           </Tooltip>
                           <AlertDialog>
                             <Tooltip>

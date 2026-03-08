@@ -1,6 +1,6 @@
 import { Recipe } from "@/types/recipe";
 
-export const DEMO_RECIPES: Recipe[] = [
+export const DEMO_RECIPES: Omit<Recipe, "bakeLog">[] = [
   {
     id: "demo-1", name: "Classic Sourdough", description: "A crusty, tangy sourdough with an open crumb.",
     tags: ["Sourdough"],

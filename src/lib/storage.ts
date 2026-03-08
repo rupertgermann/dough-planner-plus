@@ -9,6 +9,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     name: "Classic Sourdough",
     description: "A crusty, tangy sourdough with an open crumb. Perfect weekend bake using a mature levain.",
     tags: ["Sourdough"],
+    bakeLog: [],
     ingredients: [
       { id: "i1", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i2", name: "Water", amount: "375", unit: "g" },
@@ -32,6 +33,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     name: "Overnight Focaccia",
     description: "Pillowy, olive-oil-drenched focaccia with a crispy golden bottom. No kneading required.",
     tags: ["Flatbread"],
+    bakeLog: [],
     ingredients: [
       { id: "i5", name: "All-purpose flour", amount: "500", unit: "g" },
       { id: "i6", name: "Water", amount: "400", unit: "g" },
@@ -56,6 +58,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     name: "French Brioche",
     description: "Rich, buttery brioche with a tender crumb. Great for toast, French toast, or burger buns.",
     tags: ["Enriched", "Sweet"],
+    bakeLog: [],
     ingredients: [
       { id: "i11", name: "Bread flour", amount: "500", unit: "g" },
       { id: "i12", name: "Eggs", amount: "5", unit: "large" },
@@ -89,11 +92,19 @@ function seedIfNeeded(): void {
   }
 }
 
+// Migrate old recipes that don't have bakeLog
+function migrateRecipes(recipes: Recipe[]): Recipe[] {
+  return recipes.map((r) => ({
+    ...r,
+    bakeLog: r.bakeLog || [],
+  }));
+}
+
 export function getRecipes(): Recipe[] {
   try {
     seedIfNeeded();
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    return data ? migrateRecipes(JSON.parse(data)) : [];
   } catch {
     return [];
   }
@@ -109,7 +120,7 @@ export function saveRecipe(recipe: Recipe): void {
   if (index >= 0) {
     recipes[index] = { ...recipe, updatedAt: new Date().toISOString() };
   } else {
-    recipes.push(recipe);
+    recipes.push({ ...recipe, bakeLog: recipe.bakeLog || [] });
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
 }
@@ -117,6 +128,24 @@ export function saveRecipe(recipe: Recipe): void {
 export function deleteRecipe(id: string): void {
   const recipes = getRecipes().filter((r) => r.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
+}
+
+export function duplicateRecipe(id: string): Recipe | null {
+  const recipe = getRecipe(id);
+  if (!recipe) return null;
+  const now = new Date().toISOString();
+  const newRecipe: Recipe = {
+    ...recipe,
+    id: generateId(),
+    name: `${recipe.name} (Copy)`,
+    bakeLog: [],
+    ingredients: recipe.ingredients.map((ing) => ({ ...ing, id: generateId() })),
+    steps: recipe.steps.map((s) => ({ ...s, id: generateId() })),
+    createdAt: now,
+    updatedAt: now,
+  };
+  saveRecipe(newRecipe);
+  return newRecipe;
 }
 
 export function generateId(): string {
@@ -143,7 +172,7 @@ export function importRecipesFromJSON(json: string): { added: number; skipped: n
       skipped++;
       continue;
     }
-    existing.push(recipe);
+    existing.push({ ...recipe, bakeLog: recipe.bakeLog || [] });
     existingIds.add(recipe.id);
     added++;
   }

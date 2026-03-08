@@ -90,14 +90,16 @@ const RecipeEditor = () => {
       return;
     }
 
+    const existingRecipe = isNew ? null : getRecipe(id!);
     const recipe: Recipe = {
       id: isNew ? generateId() : id!,
       name: name.trim(),
       description: description.trim(),
       tags,
+      bakeLog: existingRecipe?.bakeLog || [],
       ingredients: ingredients.filter((i) => i.name.trim()),
       steps: steps.filter((s) => s.name.trim()),
-      createdAt: isNew ? new Date().toISOString() : getRecipe(id!)?.createdAt || new Date().toISOString(),
+      createdAt: isNew ? new Date().toISOString() : existingRecipe?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 

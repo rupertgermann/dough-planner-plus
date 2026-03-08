@@ -13,6 +13,14 @@ export interface BakingStep {
   instructions: string;
 }
 
+export interface BakeLogEntry {
+  id: string;
+  date: string;
+  rating: number; // 1-5
+  notes: string;
+  changes: string;
+}
+
 export interface Recipe {
   id: string;
   name: string;
@@ -20,6 +28,7 @@ export interface Recipe {
   tags: string[];
   ingredients: Ingredient[];
   steps: BakingStep[];
+  bakeLog: BakeLogEntry[];
   createdAt: string;
   updatedAt: string;
 }
