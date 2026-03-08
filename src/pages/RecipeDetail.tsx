@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Printer, Clock, Cog } from "lucide-react";
+import { ArrowLeft, Edit, Printer, Clock, Cog, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,7 @@ const RecipeDetail = () => {
     const d = new Date();
     return d.toISOString().split("T")[0];
   });
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     if (id) {
@@ -139,26 +140,57 @@ const RecipeDetail = () => {
 
         {/* Ingredients */}
         <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md print:bg-[white] print:border-[#ddd] print:shadow-none">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base text-gradient-brass print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
               Ingredients
             </CardTitle>
+            <div className="flex items-center gap-2 print:hidden">
+              <Scale className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-1">
+                {[0.5, 1, 1.5, 2, 3].map((v) => (
+                  <Button
+                    key={v}
+                    variant={scale === v ? "default" : "outline"}
+                    size="sm"
+                    className={
+                      scale === v
+                        ? "h-7 px-2 text-xs bg-neon/20 text-neon border border-neon/40 hover:bg-neon/30"
+                        : "h-7 px-2 text-xs border-brass/20 hover:border-brass/50 hover:bg-brass/5"
+                    }
+                    onClick={() => setScale(v)}
+                  >
+                    {v}×
+                  </Button>
+                ))}
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
+            {/* Print scale indicator */}
+            {scale !== 1 && (
+              <p className="hidden print:block text-sm print:text-[#666] mb-2">Scaled: {scale}×</p>
+            )}
             <ul className="space-y-2">
-              {recipe.ingredients.map((ing) => (
-                <li key={ing.id} className="flex items-baseline gap-2">
-                  <span className="font-medium text-foreground print:text-[black]">
-                    {ing.amount} {ing.unit}
-                  </span>
-                  <span className="text-muted-foreground print:text-[#444]">{ing.name}</span>
-                  {ing.percentage && (
-                    <span className="ml-auto text-xs text-neon print:text-[#666]">
-                      ({ing.percentage}%)
+              {recipe.ingredients.map((ing) => {
+                const rawAmount = parseFloat(ing.amount);
+                const scaledAmount = !isNaN(rawAmount)
+                  ? (rawAmount * scale).toFixed(scale === 1 ? 0 : 1).replace(/\.0$/, "")
+                  : ing.amount;
+
+                return (
+                  <li key={ing.id} className="flex items-baseline gap-2">
+                    <span className="font-medium text-foreground print:text-[black]">
+                      {scaledAmount} {ing.unit}
                     </span>
-                  )}
-                </li>
-              ))}
+                    <span className="text-muted-foreground print:text-[#444]">{ing.name}</span>
+                    {ing.percentage && (
+                      <span className="ml-auto text-xs text-neon print:text-[#666]">
+                        ({ing.percentage}%)
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </CardContent>
         </Card>
