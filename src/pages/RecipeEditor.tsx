@@ -104,7 +104,7 @@ const RecipeEditor = () => {
     saveRecipe(recipe);
     toast.success(isNew ? "Recipe created!" : "Recipe updated!");
     navigate("/");
-  }, [name, description, ingredients, steps, isNew, id, navigate]);
+  }, [name, description, tags, ingredients, steps, isNew, id, navigate]);
 
   useKeyboardShortcuts(useMemo(() => [
     { key: "s", ctrl: true, handler: () => handleSave() },
