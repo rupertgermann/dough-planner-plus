@@ -6,57 +6,57 @@
 
 @layer base {
   :root {
-    --background: 40 20% 95%;
-    --foreground: 225 15% 15%;
+    --background: 45 30% 98%;
+    --foreground: 30 20% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 225 15% 15%;
+    --card: 45 40% 99%;
+    --card-foreground: 30 20% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 225 15% 15%;
+    --popover: 45 40% 99%;
+    --popover-foreground: 30 20% 15%;
 
     --primary: 38 85% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 38 15% 88%;
-    --secondary-foreground: 225 15% 25%;
+    --secondary: 45 35% 92%;
+    --secondary-foreground: 30 25% 25%;
 
-    --muted: 38 10% 90%;
-    --muted-foreground: 225 10% 45%;
+    --muted: 45 25% 94%;
+    --muted-foreground: 30 15% 40%;
 
-    --accent: 157 70% 38%;
+    --accent: 157 55% 35%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 38 15% 82%;
-    --input: 38 15% 82%;
+    --border: 38 30% 85%;
+    --input: 38 30% 88%;
     --ring: 38 85% 45%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 38 15% 92%;
-    --sidebar-foreground: 225 10% 35%;
+    --sidebar-background: 45 35% 96%;
+    --sidebar-foreground: 30 15% 30%;
     --sidebar-primary: 38 85% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 38 10% 88%;
-    --sidebar-accent-foreground: 225 10% 35%;
-    --sidebar-border: 38 15% 82%;
+    --sidebar-accent: 45 30% 90%;
+    --sidebar-accent-foreground: 30 15% 30%;
+    --sidebar-border: 38 25% 85%;
     --sidebar-ring: 38 85% 45%;
 
-    --neon: 157 70% 38%;
-    --neon-cyan: 185 70% 40%;
+    --neon: 157 55% 35%;
+    --neon-cyan: 185 55% 38%;
     --brass: 38 85% 45%;
     --copper: 22 65% 40%;
-    --ember: 15 80% 48%;
-    --violet-glow: 270 60% 55%;
+    --ember: 15 75% 45%;
+    --violet-glow: 270 50% 50%;
 
-    --success: 152 69% 41%;
+    --success: 152 60% 38%;
     --success-foreground: 0 0% 98%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 225 15% 15%;
-    --info: 199 89% 48%;
+    --warning: 38 85% 48%;
+    --warning-foreground: 30 20% 15%;
+    --info: 199 75% 45%;
     --info-foreground: 0 0% 98%;
 
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
