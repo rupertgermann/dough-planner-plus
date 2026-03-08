@@ -210,6 +210,7 @@ const Index = () => {
                   </AlertDialog>
                 </CardFooter>
               </Card>
+              </Link>
             ))}
           </div>
         )}
