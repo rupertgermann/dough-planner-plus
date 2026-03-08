@@ -303,7 +303,7 @@ const RecipeDetail = () => {
       </main>
 
       {/* Print-only footer */}
-      <footer className="hidden print:!block fixed bottom-0 left-0 right-0 border-t border-[#ccc] px-6 py-3 text-[10pt] text-[#666]">
+      <footer className="hidden print:!block mt-8 pt-4 border-t border-[#ccc] text-[10pt] text-[#666]">
         <div className="flex justify-between">
           <span>{window.location.href}</span>
           <span>Printed {new Date().toLocaleDateString()}</span>
