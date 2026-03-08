@@ -269,15 +269,33 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                     </div>
                   ))}
                   {photos.length < MAX_PHOTOS && (
-                    <button
-                      type="button"
-                      onClick={() => fileRef.current?.click()}
-                      className="h-20 w-20 rounded-md border-2 border-dashed border-brass/30 hover:border-brass/60 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-base"
-                    >
-                      <Camera className="h-5 w-5" />
-                      <span className="text-[9px] font-mono-tech">Add</span>
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => cameraRef.current?.click()}
+                        className="h-20 w-20 rounded-md border-2 border-dashed border-neon/30 hover:border-neon/60 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-base"
+                      >
+                        <Camera className="h-5 w-5" />
+                        <span className="text-[9px] font-mono-tech">Camera</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => fileRef.current?.click()}
+                        className="h-20 w-20 rounded-md border-2 border-dashed border-brass/30 hover:border-brass/60 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground transition-base"
+                      >
+                        <ImagePlus className="h-5 w-5" />
+                        <span className="text-[9px] font-mono-tech">Gallery</span>
+                      </button>
+                    </>
                   )}
+                  <input
+                    ref={cameraRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                  />
                   <input
                     ref={fileRef}
                     type="file"
