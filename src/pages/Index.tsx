@@ -82,7 +82,7 @@ const Index = () => {
   };
 
   const handleLoadDemos = () => {
-    DEMO_RECIPES.forEach((r) => saveRecipe(r));
+    DEMO_RECIPES.forEach((r) => saveRecipe({ ...r, bakeLog: [] }));
     setRecipes(getRecipes());
   };
 
