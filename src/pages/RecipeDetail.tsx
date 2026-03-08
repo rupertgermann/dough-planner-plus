@@ -1,10 +1,11 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Printer, Clock, Cog, Scale, Copy } from "lucide-react";
+import { ArrowLeft, Edit, Printer, Clock, Cog, Scale, Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getRecipe, duplicateRecipe } from "@/lib/storage";
+import { getRecipe, getRecipes, duplicateRecipe, deleteRecipe } from "@/lib/storage";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useEffect, useState, useMemo } from "react";
 import { Recipe } from "@/types/recipe";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
@@ -102,9 +103,33 @@ const RecipeDetail = () => {
     }
   };
 
-  useKeyboardShortcuts(useMemo(() => [
-    { key: "p", ctrl: true, handler: () => handlePrint() },
-  ], []));
+  const handleDelete = () => {
+    if (!recipe) return;
+    deleteRecipe(recipe.id);
+    toast.success("Recipe deleted");
+    navigate("/");
+  };
+
+  // Arrow key navigation between recipes
+  useKeyboardShortcuts(useMemo(() => {
+    const allRecipes = getRecipes();
+    const currentIndex = allRecipes.findIndex((r) => r.id === id);
+    return [
+      { key: "p", ctrl: true, handler: () => handlePrint() },
+      {
+        key: "ArrowLeft",
+        handler: () => {
+          if (currentIndex > 0) navigate(`/view/${allRecipes[currentIndex - 1].id}`);
+        },
+      },
+      {
+        key: "ArrowRight",
+        handler: () => {
+          if (currentIndex < allRecipes.length - 1) navigate(`/view/${allRecipes[currentIndex + 1].id}`);
+        },
+      },
+    ];
+  }, [id, navigate]));
 
   const totalTime = recipe?.steps.reduce((sum, s) => sum + s.durationMinutes, 0) || 0;
   const hours = Math.floor(totalTime / 60);
@@ -166,6 +191,35 @@ const RecipeDetail = () => {
                 <span className="hidden sm:inline">Edit</span>
               </Link>
             </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/60 transition-base"
+                >
+                  <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Delete</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="border-brass/20 glass-heavy">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-gradient-brass">Delete "{recipe.name}"?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This recipe and all its data will be permanently removed.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-brass/20">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </header>
