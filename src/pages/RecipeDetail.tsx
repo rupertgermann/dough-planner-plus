@@ -110,7 +110,8 @@ const RecipeDetail = () => {
               <p className="mt-1 text-sm text-muted-foreground print:text-[#666]">{recipe.description}</p>
             )}
           </div>
-          <div className="flex gap-2 print:hidden">
+          <div className="flex items-center gap-2 print:hidden">
+            <ThemeToggle />
             <Button
               variant="outline"
               className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base"

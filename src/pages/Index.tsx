@@ -71,7 +71,8 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
             {SHOW_DEMO_BUTTON && (
               <Button
                 variant="ghost-neon"
