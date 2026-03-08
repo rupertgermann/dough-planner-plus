@@ -101,6 +101,7 @@ const ImportRecipe = () => {
       name: "Imported Recipe",
       description: "Imported from text",
       tags: [],
+      bakeLog: [],
       ingredients: parsed.ingredients,
       steps: parsed.steps,
       createdAt: new Date().toISOString(),
