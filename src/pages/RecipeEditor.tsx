@@ -82,7 +82,7 @@ const RecipeEditor = () => {
   };
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
+    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
       <div className="fixed bottom-[-30px] right-[-30px] opacity-[0.03] pointer-events-none">
         <Cog className="h-32 w-32 text-brass gear-slow" />
       </div>

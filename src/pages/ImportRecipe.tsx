@@ -112,7 +112,7 @@ const ImportRecipe = () => {
   };
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
+    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
       <div className="fixed top-[-40px] left-[-40px] opacity-[0.03] pointer-events-none">
         <Cog className="h-36 w-36 text-neon gear-reverse" />
       </div>
