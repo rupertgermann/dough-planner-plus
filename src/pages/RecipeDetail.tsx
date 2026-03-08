@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRecipe } from "@/lib/storage";
 import { useEffect, useState, useMemo } from "react";
 import { Recipe } from "@/types/recipe";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -70,6 +72,10 @@ const RecipeDetail = () => {
     window.print();
   };
 
+  useKeyboardShortcuts(useMemo(() => [
+    { key: "p", ctrl: true, handler: () => handlePrint() },
+  ], []));
+
   const totalTime = recipe?.steps.reduce((sum, s) => sum + s.durationMinutes, 0) || 0;
   const hours = Math.floor(totalTime / 60);
   const mins = totalTime % 60;
@@ -104,7 +110,8 @@ const RecipeDetail = () => {
               <p className="mt-1 text-sm text-muted-foreground print:text-[#666]">{recipe.description}</p>
             )}
           </div>
-          <div className="flex gap-2 print:hidden">
+          <div className="flex items-center gap-2 print:hidden">
+            <ThemeToggle />
             <Button
               variant="outline"
               className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base"

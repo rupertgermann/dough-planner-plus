@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Plus, Trash2, GripVertical, Cog, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -80,7 +81,7 @@ const RecipeEditor = () => {
     }
   }, [id, isNew, navigate]);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (!name.trim()) {
       toast.error("Please enter a recipe name");
       return;
@@ -99,7 +100,11 @@ const RecipeEditor = () => {
     saveRecipe(recipe);
     toast.success(isNew ? "Recipe created!" : "Recipe updated!");
     navigate("/");
-  };
+  }, [name, description, ingredients, steps, isNew, id, navigate]);
+
+  useKeyboardShortcuts(useMemo(() => [
+    { key: "s", ctrl: true, handler: () => handleSave() },
+  ], [handleSave]));
 
   const updateIngredient = (index: number, field: keyof Ingredient, value: string) => {
     setIngredients((prev) =>

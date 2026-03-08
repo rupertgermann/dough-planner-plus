@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Search, Clock, Import, Trash2, Cog, FlaskConical } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,7 +71,8 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
             {SHOW_DEMO_BUTTON && (
               <Button
                 variant="ghost-neon"
@@ -172,7 +174,7 @@ const Index = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="gap-2 pt-2 border-t border-border/50" onClick={(e) => e.preventDefault()}>
-                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 transition-base">
+                  <Button asChild variant="outline" size="sm" className="flex-1 border-brass/20 hover:border-brass/50 hover:bg-brass/5 hover:text-foreground transition-base">
                     <Link to={`/recipe/${recipe.id}`}>Edit</Link>
                   </Button>
                   <Button asChild variant="ghost-neon" size="sm" className="flex-1">
