@@ -169,6 +169,13 @@ const RecipeEditor = () => {
                   className="w-16 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                 />
                 <Input
+                  placeholder="%"
+                  value={ing.percentage || ""}
+                  onChange={(e) => updateIngredient(i, "percentage", e.target.value)}
+                  className="w-16 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
+                  title="Baker's percentage"
+                />
+                <Input
                   placeholder="Ingredient name"
                   value={ing.name}
                   onChange={(e) => updateIngredient(i, "name", e.target.value)}
