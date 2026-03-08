@@ -191,6 +191,35 @@ const RecipeDetail = () => {
                 <span className="hidden sm:inline">Edit</span>
               </Link>
             </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/60 transition-base"
+                >
+                  <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Delete</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="border-brass/20 glass-heavy">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-gradient-brass">Delete "{recipe.name}"?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This recipe and all its data will be permanently removed.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-brass/20">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </header>
