@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, GripVertical, Cog, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, GripVertical, Cog, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +9,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRecipe, saveRecipe, generateId } from "@/lib/storage";
 import { Recipe, Ingredient, BakingStep } from "@/types/recipe";
 import { toast } from "sonner";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import SortableStep from "@/components/SortableStep";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const emptyIngredient = (): Ingredient => ({
   id: generateId(),
@@ -25,6 +46,9 @@ const emptyStep = (): BakingStep => ({
   instructions: "",
 });
 
+// Common flour names for auto-detection
+const FLOUR_KEYWORDS = ["flour", "mehl", "farine", "harina"];
+
 const RecipeEditor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -34,6 +58,13 @@ const RecipeEditor = () => {
   const [description, setDescription] = useState("");
   const [ingredients, setIngredients] = useState<Ingredient[]>([emptyIngredient()]);
   const [steps, setSteps] = useState<BakingStep[]>([emptyStep()]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     if (!isNew && id) {
@@ -76,10 +107,65 @@ const RecipeEditor = () => {
     );
   };
 
-  const updateStep = (index: number, field: keyof BakingStep, value: string | number) => {
+  const updateStep = useCallback((index: number, field: keyof BakingStep, value: string | number) => {
     setSteps((prev) =>
       prev.map((s, i) => (i === index ? { ...s, [field]: value } : s))
     );
+  }, []);
+
+  const deleteStep = useCallback((index: number) => {
+    setSteps((prev) => prev.filter((_, j) => j !== index));
+  }, []);
+
+  const insertStepAt = useCallback((index: number) => {
+    setSteps((prev) => [...prev.slice(0, index), emptyStep(), ...prev.slice(index)]);
+  }, []);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setSteps((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  // Calculate baker's percentages based on total flour weight
+  const calculateBakersPercentages = () => {
+    // Find all flour ingredients and sum their weights
+    const flourIngredients = ingredients.filter((ing) =>
+      FLOUR_KEYWORDS.some((kw) => ing.name.toLowerCase().includes(kw))
+    );
+
+    if (flourIngredients.length === 0) {
+      toast.error("No flour found! Add an ingredient with 'flour' in the name.");
+      return;
+    }
+
+    const totalFlourWeight = flourIngredients.reduce((sum, ing) => {
+      const amount = parseFloat(ing.amount);
+      return sum + (isNaN(amount) ? 0 : amount);
+    }, 0);
+
+    if (totalFlourWeight <= 0) {
+      toast.error("Flour weight must be greater than 0");
+      return;
+    }
+
+    // Calculate percentage for each ingredient: (ingredient weight / flour weight) * 100
+    const updated = ingredients.map((ing) => {
+      const amount = parseFloat(ing.amount);
+      if (isNaN(amount) || amount <= 0) {
+        return { ...ing, percentage: "" };
+      }
+      const percentage = ((amount / totalFlourWeight) * 100).toFixed(1);
+      return { ...ing, percentage };
+    });
+
+    setIngredients(updated);
+    toast.success(`Calculated percentages based on ${totalFlourWeight}g total flour`);
   };
 
   return (
@@ -142,17 +228,42 @@ const RecipeEditor = () => {
         <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base text-gradient-brass">Ingredients</CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300"
-              onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
-            >
-              <Plus className="mr-1 h-3.5 w-3.5" />
-              Add
-            </Button>
+            <div className="flex gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-neon/30 hover:border-neon/60 hover:bg-neon/10 transition-all duration-300"
+                    onClick={calculateBakersPercentages}
+                  >
+                    <Calculator className="mr-1 h-3.5 w-3.5" />
+                    Calc %
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Calculate baker's percentages (flour = 100%)</p>
+                </TooltipContent>
+              </Tooltip>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-all duration-300"
+                onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
+              >
+                <Plus className="mr-1 h-3.5 w-3.5" />
+                Add
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+              <span className="w-4" />
+              <span className="w-20">Amount</span>
+              <span className="w-16">Unit</span>
+              <span className="w-16">%</span>
+              <span className="flex-1">Name</span>
+            </div>
             {ingredients.map((ing, i) => (
               <div key={ing.id} className="flex items-center gap-2 group">
                 <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground/30 group-hover:text-brass/50 transition-colors" />
@@ -172,7 +283,7 @@ const RecipeEditor = () => {
                   placeholder="%"
                   value={ing.percentage || ""}
                   onChange={(e) => updateIngredient(i, "percentage", e.target.value)}
-                  className="w-16 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
+                  className="w-16 border-brass/15 bg-background/40 focus-visible:ring-neon/40 text-neon"
                   title="Baker's percentage"
                 />
                 <Input
@@ -196,7 +307,7 @@ const RecipeEditor = () => {
           </CardContent>
         </Card>
 
-        {/* Steps */}
+        {/* Steps with Drag & Drop */}
         <Card className="card-glow border-brass/15 bg-card/50 backdrop-blur-md">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base text-gradient-brass">Baking Steps</CardTitle>
@@ -211,78 +322,26 @@ const RecipeEditor = () => {
             </Button>
           </CardHeader>
           <CardContent className="space-y-4">
-            {steps.map((step, i) => (
-              <div key={step.id} className="space-y-2">
-                {/* Insert before button */}
-                <div className="flex justify-center">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 text-xs text-muted-foreground hover:text-neon hover:bg-neon/10 transition-all duration-300"
-                    onClick={() => setSteps((prev) => [...prev.slice(0, i), emptyStep(), ...prev.slice(i)])}
-                  >
-                    <Plus className="mr-1 h-3 w-3" />
-                    Insert above
-                  </Button>
-                </div>
-                <div className="flex gap-3 rounded-lg border border-brass/10 bg-muted/20 p-4 backdrop-blur-sm card-hover">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neon/15 border border-neon/30 text-xs font-bold text-neon neon-border">
-                    {i + 1}
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Step name (e.g. Bulk ferment)"
-                        value={step.name}
-                        onChange={(e) => updateStep(i, "name", e.target.value)}
-                        className="flex-1 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
-                      />
-                      <div className="flex items-center gap-1">
-                        <Input
-                          type="number"
-                          placeholder="Min"
-                          value={step.durationMinutes || ""}
-                          onChange={(e) =>
-                            updateStep(i, "durationMinutes", parseInt(e.target.value) || 0)
-                          }
-                          className="w-20 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
-                        />
-                        <span className="text-xs text-muted-foreground">min</span>
-                      </div>
-                    </div>
-                    <Textarea
-                      placeholder="Instructions for this step…"
-                      value={step.instructions}
-                      onChange={(e) => updateStep(i, "instructions", e.target.value)}
-                      rows={2}
-                      className="text-sm border-brass/15 bg-background/40 focus-visible:ring-neon/40"
-                    />
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
-                    onClick={() => setSteps((prev) => prev.filter((_, j) => j !== i))}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-                {/* Insert after button (only on last item) */}
-                {i === steps.length - 1 && (
-                  <div className="flex justify-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 text-xs text-muted-foreground hover:text-neon hover:bg-neon/10 transition-all duration-300"
-                      onClick={() => setSteps((prev) => [...prev, emptyStep()])}
-                    >
-                      <Plus className="mr-1 h-3 w-3" />
-                      Insert below
-                    </Button>
-                  </div>
-                )}
-              </div>
-            ))}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={steps.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+                {steps.map((step, i) => (
+                  <SortableStep
+                    key={step.id}
+                    step={step}
+                    index={i}
+                    isLast={i === steps.length - 1}
+                    onUpdate={(field, value) => updateStep(i, field, value)}
+                    onDelete={() => deleteStep(i)}
+                    onInsertBefore={() => insertStepAt(i)}
+                    onInsertAfter={() => insertStepAt(i + 1)}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </CardContent>
         </Card>
       </main>

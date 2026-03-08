@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import RecipeEditor from "./pages/RecipeEditor";
+import RecipeDetail from "./pages/RecipeDetail";
 import TimetableView from "./pages/TimetableView";
 import ImportRecipe from "./pages/ImportRecipe";
 import NotFound from "./pages/NotFound";
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/recipe/:id" element={<RecipeEditor />} />
+          <Route path="/view/:id" element={<RecipeDetail />} />
           <Route path="/timetable/:id" element={<TimetableView />} />
           <Route path="/import" element={<ImportRecipe />} />
           <Route path="*" element={<NotFound />} />
