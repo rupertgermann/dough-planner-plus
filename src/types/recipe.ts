@@ -22,6 +22,7 @@ export interface BakeLogEntry {
   crumbRating?: number; // 1-5
   crustColor?: string;
   ovenSpring?: number; // 1-5
+  photos?: string[]; // base64 data URLs (resized)
 }
 
 export interface Recipe {
