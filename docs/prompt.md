@@ -1,19 +1,36 @@
-show me an app to plan bread baking. It should include the following features:
+## Dough Planner Plus product brief
 
-possibility to store recipes
+Dough Planner Plus is a simple app for planning bread baking.
 
-step by step timetable for preparing the dough.
+The core idea is to help bakers move from an unstructured recipe to an actionable baking schedule.
 
-import for recipes
+## MVP goals
 
-AI supports me to turn imported recipes to step by step timetable and ingredients list
+- store bread recipes locally
+- define ingredients and timed baking steps
+- generate a step-by-step timetable working backward from a target ready time
+- import recipe text and turn it into an editable ingredient list and baking workflow
+- keep the implementation simple, reliable, and easy to extend
 
-use modern JS frameworks
+## Product principles
 
-use Tailwind for styling
+- prefer simple solutions over complex automation
+- keep the UI modern, intuitive, and fast
+- use modern JavaScript tooling
+- use Tailwind CSS for styling
+- focus on a useful MVP before expanding the feature set
 
-intuitve, modern UI
+## Current implementation notes
 
-prefer simple and reliable solutions instead of overcomplicating it.
+- recipes are stored locally in the browser
+- the import flow uses lightweight parsing instead of an external AI service
+- the timetable is generated from the entered step durations
+- the app is designed as a local-first frontend MVP
 
-give an MVP first - we will implement the full featured app later.
+## Possible future improvements
+
+- better recipe import accuracy
+- optional AI-assisted recipe structuring
+- export and backup options
+- cloud sync or multi-device support
+- notifications and reminders for baking steps
