@@ -400,6 +400,12 @@ const RecipeDetail = () => {
           </CardContent>
         </Card>
 
+        {/* DDT Calculator */}
+        <DDTCalculator />
+
+        {/* Batch Cost */}
+        <BatchCost ingredients={recipe.ingredients} scale={scale} recipeId={recipe.id} />
+
         {/* Bake Log */}
         <BakeLog recipe={recipe} onUpdated={setRecipe} />
       </main>
