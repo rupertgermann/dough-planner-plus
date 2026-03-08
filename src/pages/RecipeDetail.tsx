@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRecipe } from "@/lib/storage";
 import { useEffect, useState, useMemo } from "react";
 import { Recipe } from "@/types/recipe";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const RecipeDetail = () => {
   const { id } = useParams();
