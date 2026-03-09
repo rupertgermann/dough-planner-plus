@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, GripVertical, Cog, Calculator } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, GripVertical, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { Input } from "@/components/ui/input";
@@ -178,11 +178,7 @@ const RecipeEditor = () => {
   };
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
-      <div className="fixed bottom-[-30px] right-[-30px] opacity-[0.03] pointer-events-none">
-        <Cog className="h-32 w-32 text-brass gear-slow" />
-      </div>
-
+    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
       <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
         <div className="container mx-auto flex items-center gap-4 px-4 py-6">

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Sparkles, Cog } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -114,11 +114,7 @@ const ImportRecipe = () => {
   };
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
-      <div className="fixed top-[-40px] left-[-40px] opacity-[0.03] pointer-events-none">
-        <Cog className="h-36 w-36 text-neon gear-reverse" />
-      </div>
-
+    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
       <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
         <div className="container mx-auto flex items-center gap-4 px-4 py-6">

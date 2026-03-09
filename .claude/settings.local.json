@@ -2,8 +2,9 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "Bash(npx *:*)",
-      "Bash(npm *:*)"
+      "Bash(npx *)",
+      "Bash(npm *)",
+      "Bash(grep *)"
     ]
   }
 }

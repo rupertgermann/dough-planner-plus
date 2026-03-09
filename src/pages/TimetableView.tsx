@@ -174,11 +174,7 @@ const TimetableView = () => {
   if (!recipe) return null;
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
-      <div className="fixed top-[-50px] right-[-50px] opacity-[0.03] pointer-events-none">
-        <Cog className="h-40 w-40 text-brass gear-slow" />
-      </div>
-
+    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
       <header className="relative border-b border-brass/20 glass-heavy">
         <div className="absolute inset-x-0 bottom-0 divider-glow" />
         <div className="container mx-auto flex items-center gap-3 px-4 py-4 sm:py-6 flex-wrap">
@@ -190,7 +186,7 @@ const TimetableView = () => {
           <div className="flex-1 min-w-0">
             <h1 className="text-lg sm:text-xl font-bold text-gradient-brass truncate">{recipe.name}</h1>
             <p className="text-xs text-muted-foreground flex items-center gap-1.5 tracking-widest uppercase font-mono-tech">
-              <Cog className="h-3 w-3 text-neon gear-slow" /> Baking Timetable
+              <Cog className="h-3 w-3 text-neon" /> Baking Timetable
             </p>
           </div>
           {!notificationsEnabled && "Notification" in window && (

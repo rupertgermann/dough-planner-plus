@@ -109,7 +109,7 @@ const Index = () => {
   const btnOutlineClass = "border-brass/20 hover:border-brass/50 hover:bg-brass/5 hover:text-foreground transition-base";
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden">
+    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden">
       {/* Decorative wheat */}
       <div className="fixed top-[-60px] right-[-60px] opacity-[0.04] pointer-events-none rotate-12">
         <Wheat className="h-48 w-48 text-brass" />
@@ -173,11 +173,11 @@ const Index = () => {
                   placeholder="Search recipes…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 border-brass/20 bg-card/50 backdrop-blur-sm focus-visible:ring-neon/40 focus-visible:border-neon/30 transition-base"
+                  className="pl-9 border-brass/20 bg-card/80 focus-visible:ring-neon/40 focus-visible:border-neon/30 transition-base"
                 />
               </div>
               <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortKey)}>
-                <SelectTrigger className="w-[160px] border-brass/20 bg-card/50 backdrop-blur-sm">
+                <SelectTrigger className="w-[160px] border-brass/20 bg-card/80">
                   <ArrowUpDown className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
                   <SelectValue />
                 </SelectTrigger>

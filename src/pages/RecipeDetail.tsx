@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Printer, Clock, Cog, Scale, Copy, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit, Printer, Clock, Scale, Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -148,11 +148,7 @@ const RecipeDetail = () => {
   }
 
   return (
-    <div className="min-h-screen aurora-bg steampunk-bg noise-overlay mechanical-pattern relative overflow-hidden print:!bg-[white] print:!text-[black]">
-      <div className="fixed bottom-[-30px] right-[-30px] opacity-[0.03] pointer-events-none print:hidden">
-        <Cog className="h-32 w-32 text-brass gear-slow" />
-      </div>
-
+    <div className="min-h-screen aurora-bg steampunk-bg relative overflow-hidden print:!bg-[white] print:!text-[black]">
       <header className="relative border-b border-brass/20 glass-heavy print:bg-[white] print:border-[#ddd]">
         <div className="absolute inset-x-0 bottom-0 divider-glow print:hidden" />
         <div className="container mx-auto flex items-center gap-3 px-4 py-4 sm:py-6 flex-wrap">
