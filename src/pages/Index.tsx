@@ -299,23 +299,19 @@ const Index = () => {
                         {recipe.steps.length} step{recipe.steps.length !== 1 ? "s" : ""}
                       </span>
                       <TooltipProvider delayDuration={300}>
-                        <span className="ml-auto flex items-center gap-1" onClick={(e) => e.preventDefault()}>
+                        <span className="ml-auto flex items-center gap-1" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-brass/10 transition-base">
-                                <Link to={`/recipe/${recipe.id}`}>
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-brass/10 transition-base" onClick={() => navigate(`/recipe/${recipe.id}`)}>
                                   <Pencil className="h-3.5 w-3.5" />
-                                </Link>
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent><p>Edit</p></TooltipContent>
                           </Tooltip>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-neon hover:bg-neon/10 transition-base">
-                                <Link to={`/timetable/${recipe.id}`}>
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-neon hover:bg-neon/10 transition-base" onClick={() => navigate(`/timetable/${recipe.id}`)}>
                                   <CalendarClock className="h-3.5 w-3.5" />
-                                </Link>
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent><p>Timetable</p></TooltipContent>
