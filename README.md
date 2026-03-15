@@ -176,6 +176,30 @@ Import precedence:
 5. fall back to quick local parse when AI extraction is unavailable or unusable
 6. present the normalized draft for editing and save it locally
 
+### Tuning the AI import prompt
+
+The recipe-parsing prompt lives in [server/lib/parse-recipe-with-ai.ts](server/lib/parse-recipe-with-ai.ts).
+
+The main prompt constant is:
+
+- `RECIPE_IMPORT_SYSTEM_PROMPT`
+
+That is the place to edit the extraction instructions when you want to change how the AI handles:
+
+- what belongs in `description`
+- what belongs in `notes`
+- ingredient parsing behavior
+- step naming and instruction style
+- how conservative or aggressive the extraction should be
+
+Related tuning points:
+
+- `OPENAI_RECIPE_IMPORT_MODEL` in `.env` selects the model used for parsing
+- [src/lib/import/import-schema.ts](src/lib/import/import-schema.ts) defines the structured output shape the model must return
+- [src/lib/import/normalize-import.ts](src/lib/import/normalize-import.ts) defines the cleanup and post-processing rules applied after generation
+
+If you want different parsing behavior, update the prompt first, then adjust the schema or normalization rules only when the data contract itself needs to change.
+
 ## Data model and storage
 
 Recipes are stored in browser `localStorage` under the `bread-planner-recipes` key.

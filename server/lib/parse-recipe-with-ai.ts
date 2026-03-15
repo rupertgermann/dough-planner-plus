@@ -18,7 +18,7 @@ const RECIPE_IMPORT_SYSTEM_PROMPT = [
   "Keep step names short and put the detailed wording in instructions.",
 ].join(" ");
 
-const DEFAULT_MODEL = "gpt-4.1-mini";
+const DEFAULT_MODEL = "gpt-5-mini";
 
 function classifyAIImportFailure(error: unknown): RecipeImportError {
   const message = error instanceof Error ? error.message : "AI extraction failed for this recipe source.";
