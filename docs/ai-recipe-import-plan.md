@@ -1,265 +1,261 @@
-# AI-Driven Recipe Import — Implementation Plan
+# AI Recipe Import Architecture
 
-## Overview
+## Goal
 
-Replace the current regex-based recipe parser (`ImportRecipe.tsx`) with an AI-powered importer that can reliably extract structured recipe data from:
+The recipe import system accepts pasted text and recipe URLs, extracts a structured draft recipe, and saves the final recipe locally through the existing storage flow after user review.
 
-1. **Pasted text** — free-form recipe text, blog post copy-paste, unstructured notes
-2. **URL input** — fetch and parse any recipe webpage (blogs, cooking sites, PDFs)
+The implementation is built around:
 
-The AI will extract recipe name, description, tags, ingredients (with amounts/units), and baking steps (with durations) — mapping directly to the existing `Recipe` type.
+- a shared import schema
+- a normalization layer
+- a fast local quick-parse fallback
+- a server route for URL fetching and AI extraction
+- an editable client preview before save
 
----
-
-## Architecture
-
-```
-┌──────────────────────────────────────────────────┐
-│                  ImportRecipe Page                │
-│                                                  │
-│  ┌──────────┐  ┌──────────────┐                  │
-│  │ URL Tab  │  │  Text Tab    │   (toggle)       │
-│  └────┬─────┘  └──────┬───────┘                  │
-│       │               │                          │
-│       ▼               │                          │
-│  ┌──────────┐         │                          │
-│  │ Fetcher  │         │                          │
-│  │ (proxy)  │         │                          │
-│  └────┬─────┘         │                          │
-│       │               │                          │
-│       ▼               ▼                          │
-│  ┌────────────────────────────┐                  │
-│  │   AI Parsing Service      │                   │
-│  │   (Claude API call)       │                   │
-│  └────────────┬───────────────┘                  │
-│               │                                  │
-│               ▼                                  │
-│  ┌────────────────────────────┐                  │
-│  │   Parsed Recipe Preview   │                   │
-│  │   (editable before save)  │                   │
-│  └────────────┬───────────────┘                  │
-│               │                                  │
-│               ▼                                  │
-│         Save to localStorage                     │
-└──────────────────────────────────────────────────┘
-```
-
----
-
-## Phase 1: AI Parsing Service
-
-### 1.1 API Key Management
-
-**File:** `src/lib/ai-config.ts`
-
-- Store the user's Claude API key in `localStorage` under key `bread-planner-ai-key`
-- Provide `getApiKey()` / `setApiKey()` / `clearApiKey()` helpers
-- The key is never sent anywhere except the Anthropic API
-- Add a settings UI (small dialog/modal) accessible from the import page header to enter/update/remove the key
-
-### 1.2 AI Parse Function
-
-**File:** `src/lib/ai-import.ts`
-
-Create an `aiParseRecipe(text: string): Promise<ParsedRecipe>` function that:
-
-1. Sends the raw text to the Claude API (`claude-sonnet-4-6` for speed/cost balance)
-2. Uses a structured system prompt instructing Claude to return JSON matching the app's schema
-3. Returns a typed result matching the `Recipe` interface (minus `id`, `createdAt`, etc.)
-
-**Prompt strategy:**
+## Architecture overview
 
 ```
-You are a recipe extraction assistant for a bread baking planner app.
-Extract the following from the provided recipe text:
-
-- name: Recipe title
-- description: 1-2 sentence summary
-- tags: Zero or more from [Sourdough, Enriched, Flatbread, Whole Grain, Rye, Quick Bread, Rolls, Sweet]
-- ingredients: Array of { name, amount, unit }
-  - Normalize units (g, kg, ml, L, tsp, tbsp, cup, oz, lb, piece)
-  - Separate amount from unit (e.g. "500g" → amount: "500", unit: "g")
-- steps: Array of { name (short label ≤50 chars), durationMinutes (integer, 0 if unknown), instructions (full text) }
-  - Estimate durations from context when not explicitly stated (e.g. "let rise until doubled" → 60 min)
-
-Return ONLY valid JSON, no markdown fences, no explanation.
+┌─────────────────────────────────────────────────────────────┐
+│                     ImportRecipe Page                       │
+│                                                             │
+│  Text input / URL input                                     │
+│          │                                                  │
+│          ├──────────── Quick Parse ────────────┐            │
+│          │                                      ▼           │
+│          │                         Shared quick parser       │
+│          │                                      │           │
+│          ▼                                      │           │
+│   POST /api/recipe-import                       │           │
+│          │                                      │           │
+└──────────┼──────────────────────────────────────┼───────────┘
+           │                                      │
+           ▼                                      │
+┌─────────────────────────────────────────────────────────────┐
+│                    Server Import Route                      │
+│                                                             │
+│  validate input                                             │
+│  if URL: fetch HTML server-side                             │
+│  try JSON-LD Recipe extraction first                        │
+│  else clean source text                                     │
+│  call AI SDK generateObject()                               │
+│  model: openai.responses('gpt-4.1-mini')                    │
+│  schema: ImportedRecipeDraftSchema                          │
+│  normalize result                                           │
+└──────────┬──────────────────────────────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Parsed Recipe Draft Response                │
+│        name, description, tags, ingredients, steps          │
+│        source = 'jsonld' | 'ai' | 'quick-parse'            │
+│        warnings[]                                           │
+└──────────┬──────────────────────────────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Editable Preview in the Client              │
+│                 Save -> localStorage recipe flow            │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Response parsing:**
-- Parse JSON from response
-- Validate with Zod schema (reuse/extend existing types)
-- Assign `generateId()` to each ingredient and step
-- Fall back to the existing regex parser if the API call fails (network error, no key configured)
+## Core design choices
 
-### 1.3 Zod Validation Schema
+### Shared draft shape
 
-**File:** `src/lib/ai-import.ts` (co-located)
+Import returns a draft recipe instead of the full persisted `Recipe` shape.
+
+The draft excludes persistence-only fields such as:
+
+- `id`
+- `createdAt`
+- `updatedAt`
+- `bakeLog`
+
+The client assigns those values when saving.
+
+### Server-side AI boundary
+
+The browser never calls OpenAI directly.
+
+The server route handles:
+
+- request validation
+- URL fetching
+- JSON-LD extraction
+- AI invocation
+- normalization
+- final response validation
+
+### Structured data first
+
+URL imports prefer `schema.org/Recipe` JSON-LD whenever a page exposes it. That path is cheaper, faster, and usually more accurate than reconstructing recipe structure from visible text.
+
+### Fallback resilience
+
+Quick parse remains part of the product surface:
+
+- directly as a user action for pasted text
+- indirectly as a fallback when server-side AI extraction fails
+
+## Shared contracts
+
+Shared schema file:
+
+- [src/lib/import/import-schema.ts](../src/lib/import/import-schema.ts)
+
+Key types:
 
 ```ts
-const AIParsedRecipeSchema = z.object({
-  name: z.string().min(1),
-  description: z.string(),
-  tags: z.array(z.string()),
-  ingredients: z.array(z.object({
-    name: z.string(),
-    amount: z.string(),
-    unit: z.string(),
-  })),
-  steps: z.array(z.object({
-    name: z.string().max(50),
-    durationMinutes: z.number().int().min(0),
-    instructions: z.string(),
-  })),
-});
+type RecipeImportRequest =
+  | { mode: "text"; text: string }
+  | { mode: "url"; url: string };
+
+type RecipeImportResponse = {
+  recipe: ImportedRecipeDraft;
+  source: "jsonld" | "ai" | "quick-parse";
+  warnings: string[];
+};
 ```
 
----
+Shared normalization file:
 
-## Phase 2: URL Fetching
+- [src/lib/import/normalize-import.ts](../src/lib/import/normalize-import.ts)
 
-### 2.1 URL-to-Text Extraction
+Normalization rules:
 
-**File:** `src/lib/url-fetcher.ts`
+- trim whitespace
+- collapse repeated blank lines in imported source text
+- filter empty ingredients and steps
+- clamp step names to 50 characters
+- round `durationMinutes` to non-negative integers
+- preserve unknown values as empty strings or `0`
+- filter tags to supported preset tags
+- deduplicate warnings
 
-Fetching external URLs from the browser is blocked by CORS. Options (in order of preference):
+## Runtime flow
 
-**Option A — Client-side with a CORS proxy (recommended for local-first):**
+### Text import
 
-- Use a lightweight public CORS proxy (e.g. `allorigins.win`, or self-hostable `cors-anywhere`)
-- Fetch the HTML through the proxy
-- Extract meaningful text client-side using a `DOMParser`:
-  - Look for JSON-LD `<script type="application/ld+json">` containing `schema.org/Recipe` — this is the gold standard for recipe sites and contains pre-structured data
-  - Fall back to extracting from `<article>`, `<main>`, or `<body>` with HTML tag stripping
-  - Strip nav, footer, sidebar, ads, script, style elements
+1. Validate `{ mode: "text", text }`.
+2. Send the source text to the AI extraction pipeline.
+3. Validate and normalize the returned draft.
+4. Fall back to quick parse if AI extraction fails.
+5. Return the draft plus the import source.
 
-**Option B — User paste fallback:**
+### URL import
 
-- If the proxy fails or the user prefers not to use one, show instructions: "Open the URL, select all text (Ctrl+A), copy, and paste here"
-- This gracefully degrades to the text-paste flow
+1. Validate `{ mode: "url", url }`.
+2. Fetch the recipe page server-side.
+3. Search JSON-LD scripts for a `Recipe` node.
+4. Map structured ingredients and steps when possible.
+5. If JSON-LD is insufficient, convert HTML to cleaned source text.
+6. Run AI extraction against the cleaned text.
+7. Fall back to quick parse if AI extraction fails.
+8. Return the draft plus the import source.
 
-### 2.2 Schema.org/Recipe Shortcut
+## Server files
 
-Many recipe sites embed structured data in JSON-LD format. When detected:
+- [api/recipe-import.ts](../api/recipe-import.ts): production HTTP handler
+- [server/lib/import-recipe.ts](../server/lib/import-recipe.ts): import orchestration
+- [server/lib/fetch-recipe-source.ts](../server/lib/fetch-recipe-source.ts): server-side URL fetching
+- [server/lib/extract-jsonld-recipe.ts](../server/lib/extract-jsonld-recipe.ts): JSON-LD recipe extraction
+- [server/lib/html-to-recipe-text.ts](../server/lib/html-to-recipe-text.ts): HTML text cleanup
+- [server/lib/parse-recipe-with-ai.ts](../server/lib/parse-recipe-with-ai.ts): AI SDK integration
+- [server/vite-recipe-import-plugin.ts](../server/vite-recipe-import-plugin.ts): Vite dev middleware
 
-- Parse directly into the app's `Recipe` format without AI
-- Map `recipeIngredient[]` → `ingredients[]`
-- Map `recipeInstructions[]` → `steps[]`
-- Map `cookTime`/`prepTime` (ISO 8601 duration) → step durations
-- Only call the AI if the structured data is incomplete or missing
+## Client files
 
-This saves API calls and provides instant parsing for most popular recipe sites.
+- [src/pages/ImportRecipe.tsx](../src/pages/ImportRecipe.tsx): import UI and editable preview
+- [src/lib/import/quick-parse.ts](../src/lib/import/quick-parse.ts): quick text parser
+- [src/lib/import/normalize-import.ts](../src/lib/import/normalize-import.ts): shared normalization and save mapping
 
----
+## AI extraction
 
-## Phase 3: UI Updates
+AI extraction uses:
 
-### 3.1 Revamped Import Page
+- `ai`
+- `@ai-sdk/openai`
+- OpenAI Responses API
+- `generateObject()`
+- Zod schema validation
 
-**File:** `src/pages/ImportRecipe.tsx` (modify existing)
+Model selection:
 
-**Layout changes:**
+- `OPENAI_RECIPE_IMPORT_MODEL` chooses the model
+- the default model is `gpt-4.1-mini`
 
-1. **Input mode toggle** — Tabs or segmented control: `URL` | `Text`
-2. **URL mode:**
-   - URL input field with "Fetch & Parse" button
-   - Loading state with spinner during fetch + AI parse
-   - Error state if URL is unreachable
-3. **Text mode:**
-   - Keep existing `<Textarea>` for pasted text
-   - "Parse with AI" button (primary) — uses Claude API
-   - "Quick Parse" link/button (secondary) — uses existing regex parser as fallback
-4. **Preview section** (shared by both modes):
-   - Editable recipe name and description fields
-   - Tag selector (from `PRESET_TAGS`)
-   - Ingredient list with inline edit (amount, unit, name per row)
-   - Step list with inline edit (name, duration, instructions per row)
-   - Drag-and-drop reorder for steps (reuse `SortableStep`)
-5. **Save button** — creates `Recipe`, saves to `localStorage`, navigates to editor
+The AI prompt is designed for structured extraction:
 
-### 3.2 API Key Settings
+- extract a bread or baking recipe from messy input
+- prefer exact values from the source
+- avoid inventing ingredients or timings
+- split amount, unit, and ingredient name when possible
+- use `durationMinutes = 0` when unknown
+- keep step names short and detailed instructions in `instructions`
 
-**Component:** `src/components/ApiKeyDialog.tsx`
+## UI behavior
 
-- Small dialog triggered by a "Settings" / gear icon on the import page
-- Input field for Claude API key (masked, with show/hide toggle)
-- "Save" / "Clear" buttons
-- Status indicator: key configured (green dot) or not (gray dot)
-- Link to Anthropic's API key page for users who don't have one yet
+The import screen exposes:
 
-### 3.3 Loading & Error States
+- input mode toggle: `Paste Text` or `Import URL`
+- primary AI import action
+- secondary `Quick Parse` action for pasted text
+- warnings from the import pipeline
+- source badge showing `AI`, `JSON-LD`, or `Quick Parse`
+- editable fields for recipe name, description, tags, ingredients, and steps
+- save action that maps the draft into the persisted `Recipe` shape
 
-- Skeleton loaders during AI parsing (ingredient/step card placeholders)
-- Toast notifications for errors: invalid URL, fetch failure, AI parse failure, rate limit
-- Graceful fallback: "AI parsing failed — try the quick parser instead"
+## Storage mapping
 
----
+Saving an imported draft assigns:
 
-## Phase 4: Refinements
+- recipe `id`
+- ingredient `id`
+- step `id`
+- `createdAt`
+- `updatedAt`
+- `bakeLog = []`
 
-### 4.1 Prompt Caching / Token Optimization
+The final saved recipe uses the same storage path as manually created recipes.
 
-- The system prompt is static — use Claude's prompt caching if available via the API
-- Trim input text to ~4000 tokens max to keep costs low (recipe text rarely exceeds this)
-- Use `claude-haiku-4-5` as an even cheaper alternative (configurable in settings)
+## Testing
 
-### 4.2 Duplicate Detection
+Import-focused tests cover:
 
-- Before saving an AI-imported recipe, check existing recipes for name similarity
-- Warn if a likely duplicate exists: "You already have a recipe called 'Sourdough Country Loaf'. Import anyway?"
+- quick parse behavior
+- normalization rules
+- JSON-LD extraction
 
-### 4.3 Batch Import (Stretch Goal)
+Test files:
 
-- Allow pasting multiple recipes separated by a delimiter (`---`)
-- AI parses each independently
-- Preview all, select which to import
+- [src/test/import/quick-parse.test.ts](../src/test/import/quick-parse.test.ts)
+- [src/test/import/normalize-import.test.ts](../src/test/import/normalize-import.test.ts)
+- [src/test/import/extract-jsonld-recipe.test.ts](../src/test/import/extract-jsonld-recipe.test.ts)
 
----
+## Deployment expectations
 
-## File Change Summary
+Development:
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/lib/ai-config.ts` | **New** | API key storage helpers |
-| `src/lib/ai-import.ts` | **New** | AI parsing function + Zod schema |
-| `src/lib/url-fetcher.ts` | **New** | URL fetch + HTML-to-text extraction + JSON-LD parser |
-| `src/pages/ImportRecipe.tsx` | **Modify** | Add URL tab, AI parse button, editable preview |
-| `src/components/ApiKeyDialog.tsx` | **New** | API key configuration dialog |
-| `src/types/recipe.ts` | **No change** | Existing types are sufficient |
-| `src/lib/storage.ts` | **No change** | Existing save/import functions work as-is |
+- Vite serves the client
+- the dev middleware exposes `/api/recipe-import`
 
-### New Dependencies
+Production:
 
-| Package | Purpose |
-|---------|---------|
-| `@anthropic-ai/sdk` | Claude API client (official SDK) |
+- the platform serves [api/recipe-import.ts](../api/recipe-import.ts) as an HTTP endpoint
+- the server environment provides `OPENAI_API_KEY`
 
-No other new dependencies required — Zod is already installed, DOMParser is built into browsers.
+## Scope boundaries
 
----
+The current implementation covers:
 
-## Implementation Order
+- pasted recipe text
+- standard HTML recipe pages
+- JSON-LD extraction
+- AI-assisted fallback parsing
+- editable draft review before save
 
-1. `ai-config.ts` + `ApiKeyDialog.tsx` — API key management (testable independently)
-2. `ai-import.ts` — AI parsing function (test with hardcoded text)
-3. Update `ImportRecipe.tsx` — wire in AI parse, add editable preview
-4. `url-fetcher.ts` — URL fetching + JSON-LD extraction
-5. Update `ImportRecipe.tsx` — add URL tab, wire in fetcher
-6. Polish: loading states, error handling, fallback to regex parser
-7. Duplicate detection + settings for model selection
+The current implementation does not cover:
 
----
-
-## Security Considerations
-
-- API key stored only in `localStorage` (same security model as recipes)
-- API key never logged, never sent to any endpoint other than `api.anthropic.com`
-- URL fetcher proxy is read-only (GET requests only)
-- AI responses validated with Zod before use — no raw `eval()` or `innerHTML`
-- User-provided URLs are sanitized (must start with `http://` or `https://`)
-
-## Cost Estimate
-
-- Typical recipe text: ~500-1500 tokens input, ~300-800 tokens output
-- Using `claude-sonnet-4-6`: ~$0.003-0.008 per recipe import
-- Using `claude-haiku-4-5`: ~$0.0003-0.0008 per recipe import
-- Users importing 10 recipes/month: < $0.10/month with Sonnet
+- PDF import
+- OCR or screenshot import
+- batch URL import
