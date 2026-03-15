@@ -38,7 +38,7 @@ The implementation is built around:
 │  try JSON-LD Recipe extraction first                        │
 │  else clean source text                                     │
 │  call AI SDK generateObject()                               │
-│  model: openai.responses('gpt-4.1-mini')                    │
+│  model: openai.responses('gpt-5-mini')                    │
 │  schema: ImportedRecipeDraftSchema                          │
 │  normalize result                                           │
 └──────────┬──────────────────────────────────────────────────┘
@@ -182,7 +182,7 @@ AI extraction uses:
 Model selection:
 
 - `OPENAI_RECIPE_IMPORT_MODEL` chooses the model
-- the default model is `gpt-4.1-mini`
+- the default model is `gpt-5-mini`
 
 The AI prompt is designed for structured extraction:
 

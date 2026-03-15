@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Globe,
+  LoaderCircle,
   Plus,
   Sparkles,
   Trash2,
@@ -231,7 +232,11 @@ const ImportRecipe = () => {
                 className="sm:flex-1 hover:scale-[1.02] transition-base"
                 disabled={isImporting}
               >
-                <Sparkles className="mr-2 h-4 w-4" />
+                {isImporting ? (
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-2 h-4 w-4" />
+                )}
                 {isImporting ? "Importing..." : mode === "text" ? "Import with AI" : "Import from URL"}
               </Button>
               {mode === "text" && (
@@ -245,6 +250,22 @@ const ImportRecipe = () => {
                 </Button>
               )}
             </div>
+
+            {isImporting && (
+              <div className="flex items-start gap-3 rounded-lg border border-neon/30 bg-neon/5 px-4 py-3 text-sm">
+                <LoaderCircle className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-neon" />
+                <div className="space-y-1">
+                  <p className="font-medium text-foreground">
+                    Import in progress
+                  </p>
+                  <p className="text-muted-foreground">
+                    {mode === "text"
+                      ? "Extracting ingredients and steps from your pasted recipe text."
+                      : "Fetching the recipe page and building a structured draft."}
+                  </p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -291,6 +312,19 @@ const ImportRecipe = () => {
                     }
                     className="border-brass/20 bg-background/50 focus-visible:ring-neon/40"
                   />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="draft-notes">Notes</Label>
+                  <Textarea
+                    id="draft-notes"
+                    rows={6}
+                    value={draft.notes}
+                    onChange={(event) =>
+                      updateDraft((current) => ({ ...current, notes: event.target.value }))
+                    }
+                    className="border-brass/20 bg-background/50 focus-visible:ring-neon/40 font-mono-tech"
+                  />
+                  <p className="text-xs text-muted-foreground">Markdown supported. AI uses this field for useful context that does not fit the main recipe structure.</p>
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label>Tags</Label>

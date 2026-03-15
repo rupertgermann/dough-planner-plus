@@ -14,6 +14,7 @@ describe("normalizeImportedRecipeDraft", () => {
     const result = normalizeImportedRecipeDraft({
       name: "  Rustic Rye  ",
       description: "  Dark loaf \n\n with caraway  ",
+      notes: "  ## Bake notes \n\n Proof until bubbly.  ",
       tags: ["rye bread", "weeknight"],
       ingredients: [
         { name: "  Rye flour ", amount: " 500 ", unit: " g " },
@@ -30,6 +31,7 @@ describe("normalizeImportedRecipeDraft", () => {
     });
 
     expect(result.tags).toEqual(["Rye"]);
+    expect(result.notes).toBe("## Bake notes\nProof until bubbly.");
     expect(result.ingredients).toHaveLength(1);
     expect(result.steps[0].name).toBe("Mix and rest for 90 min");
     expect(result.steps[0].durationMinutes).toBe(90);
@@ -47,6 +49,7 @@ describe("import schemas", () => {
     const recipe = ImportedRecipeDraftSchema.parse({
       name: "Focaccia",
       description: "",
+      notes: "",
       tags: ["Flatbread"],
       ingredients: [{ name: "Flour", amount: "500", unit: "g" }],
       steps: [{ name: "Bake", durationMinutes: 25, instructions: "Bake until golden." }],

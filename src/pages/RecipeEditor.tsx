@@ -58,6 +58,7 @@ const RecipeEditor = () => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [notes, setNotes] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([emptyIngredient()]);
   const [steps, setSteps] = useState<BakingStep[]>([emptyStep()]);
@@ -75,6 +76,7 @@ const RecipeEditor = () => {
       if (recipe) {
         setName(recipe.name);
         setDescription(recipe.description);
+        setNotes(recipe.notes || "");
         setTags(recipe.tags || []);
         setIngredients(recipe.ingredients.length ? recipe.ingredients : [emptyIngredient()]);
         setSteps(recipe.steps.length ? recipe.steps : [emptyStep()]);
@@ -95,6 +97,7 @@ const RecipeEditor = () => {
       id: isNew ? generateId() : id!,
       name: name.trim(),
       description: description.trim(),
+      notes: notes.trim(),
       tags,
       bakeLog: existingRecipe?.bakeLog || [],
       ingredients: ingredients.filter((i) => i.name.trim()),
@@ -105,8 +108,8 @@ const RecipeEditor = () => {
 
     saveRecipe(recipe);
     toast.success(isNew ? "Recipe created!" : "Recipe updated!");
-    navigate("/");
-  }, [name, description, tags, ingredients, steps, isNew, id, navigate]);
+    navigate(`/view/${recipe.id}`);
+  }, [name, description, notes, tags, ingredients, steps, isNew, id, navigate]);
 
   useKeyboardShortcuts(useMemo(() => [
     { key: "s", ctrl: true, handler: () => handleSave() },
@@ -225,6 +228,18 @@ const RecipeEditor = () => {
                 rows={2}
                 className="border-brass/20 bg-background/50 focus-visible:ring-neon/40"
               />
+            </div>
+            <div>
+              <Label htmlFor="notes" className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">Notes</Label>
+              <Textarea
+                id="notes"
+                placeholder={`## Dough notes\n\n- Fermentation cues\n- Equipment tips\n- Serving ideas`}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={6}
+                className="border-brass/20 bg-background/50 focus-visible:ring-neon/40 font-mono-tech"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">Markdown supported.</p>
             </div>
             <div>
               <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono-tech">Tags</Label>

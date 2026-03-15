@@ -32,6 +32,7 @@ describe("extractJsonLdRecipe", () => {
 
     expect(result).not.toBeNull();
     expect(result?.name).toBe("Pan Pizza");
+    expect(result?.notes).toBe("");
     expect(result?.tags).toEqual(["Flatbread"]);
     expect(result?.ingredients).toHaveLength(3);
     expect(result?.steps[1].durationMinutes).toBe(120);

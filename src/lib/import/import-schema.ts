@@ -2,8 +2,8 @@ import { z } from "zod";
 
 const ImportedIngredientSchema = z.object({
   name: z.string().trim().min(1),
-  amount: z.string().default(""),
-  unit: z.string().default(""),
+  amount: z.string(),
+  unit: z.string(),
 });
 
 const ImportedStepSchema = z.object({
@@ -14,11 +14,12 @@ const ImportedStepSchema = z.object({
 
 export const ImportedRecipeDraftSchema = z.object({
   name: z.string().trim().min(1),
-  description: z.string().default(""),
-  tags: z.array(z.string()).default([]),
+  description: z.string(),
+  notes: z.string(),
+  tags: z.array(z.string()),
   ingredients: z.array(ImportedIngredientSchema).min(1),
   steps: z.array(ImportedStepSchema).min(1),
-  warnings: z.array(z.string()).default([]),
+  warnings: z.array(z.string()),
 });
 
 const HttpUrlSchema = z.string().url().refine((value) => /^https?:\/\//i.test(value), {
@@ -41,7 +42,7 @@ export const RecipeImportSourceSchema = z.enum(["jsonld", "ai", "quick-parse"]);
 export const RecipeImportResponseSchema = z.object({
   recipe: ImportedRecipeDraftSchema,
   source: RecipeImportSourceSchema,
-  warnings: z.array(z.string()).default([]),
+  warnings: z.array(z.string()),
 });
 
 export type ImportedIngredient = z.infer<typeof ImportedIngredientSchema>;

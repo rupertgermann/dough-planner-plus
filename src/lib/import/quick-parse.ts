@@ -130,6 +130,7 @@ export function quickParseRecipeText(text: string): ImportedRecipeDraft {
   return normalizeImportedRecipeDraft({
     name: inferRecipeName(lines),
     description: "Imported with quick parse",
+    notes: "",
     tags: [],
     ingredients,
     steps,

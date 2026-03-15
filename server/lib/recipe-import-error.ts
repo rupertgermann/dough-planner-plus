@@ -1,10 +1,16 @@
 export class RecipeImportError extends Error {
   statusCode: number;
+  allowQuickParseFallback: boolean;
 
-  constructor(message: string, statusCode = 500) {
+  constructor(
+    message: string,
+    statusCode = 500,
+    options: { allowQuickParseFallback?: boolean } = {},
+  ) {
     super(message);
     this.name = "RecipeImportError";
     this.statusCode = statusCode;
+    this.allowQuickParseFallback = options.allowQuickParseFallback ?? false;
   }
 }
 

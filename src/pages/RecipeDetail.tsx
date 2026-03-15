@@ -14,6 +14,7 @@ import { BakeLog } from "@/components/BakeLog";
 import { HydrationBadge } from "@/components/HydrationBadge";
 import { DDTCalculator } from "@/components/DDTCalculator";
 import { BatchCost } from "@/components/BatchCost";
+import MarkdownContent from "@/components/MarkdownContent";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
@@ -301,6 +302,22 @@ const RecipeDetail = () => {
             </ul>
           </CardContent>
         </Card>
+
+        {recipe.notes && (
+          <Card className="card-glow border-brass/15 glass print:bg-[white] print:border-[#ddd] print:shadow-none">
+            <CardHeader>
+              <CardTitle className="text-base text-gradient-brass print:text-[black] print:bg-none print:[-webkit-text-fill-color:black]">
+                Notes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <MarkdownContent
+                content={recipe.notes}
+                className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground prose-code:text-foreground dark:prose-invert print:prose-p:text-[#444] print:prose-li:text-[#444] print:prose-headings:text-[black]"
+              />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Timetable Configuration */}
         <Card className="card-glow border-brass/15 glass print:bg-[white] print:border-[#ddd] print:shadow-none">

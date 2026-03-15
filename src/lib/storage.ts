@@ -8,6 +8,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-sourdough",
     name: "Classic Sourdough",
     description: "A crusty, tangy sourdough with an open crumb. Perfect weekend bake using a mature levain.",
+    notes: "## Notes\n\n- Use a mature levain.\n- Steam well for the first 20 minutes.\n- Best baked straight from the fridge after the cold retard.",
     tags: ["Sourdough"],
     bakeLog: [],
     ingredients: [
@@ -32,6 +33,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-focaccia",
     name: "Overnight Focaccia",
     description: "Pillowy, olive-oil-drenched focaccia with a crispy golden bottom. No kneading required.",
+    notes: "## Notes\n\n- Generous olive oil is part of the texture, not just a garnish.\n- Dimple the dough gently to avoid degassing it completely.",
     tags: ["Flatbread"],
     bakeLog: [],
     ingredients: [
@@ -57,6 +59,7 @@ const SAMPLE_RECIPES: Recipe[] = [
     id: "demo-brioche",
     name: "French Brioche",
     description: "Rich, buttery brioche with a tender crumb. Great for toast, French toast, or burger buns.",
+    notes: "## Notes\n\n- Keep the butter cold when mixing.\n- Chill the dough before shaping if it becomes too soft.",
     tags: ["Enriched", "Sweet"],
     bakeLog: [],
     ingredients: [
@@ -97,6 +100,7 @@ function migrateRecipes(recipes: Recipe[]): Recipe[] {
   return recipes.map((r) => ({
     ...r,
     bakeLog: r.bakeLog || [],
+    notes: r.notes || "",
   }));
 }
 
@@ -120,7 +124,7 @@ export function saveRecipe(recipe: Recipe): void {
   if (index >= 0) {
     recipes[index] = { ...recipe, updatedAt: new Date().toISOString() };
   } else {
-    recipes.push({ ...recipe, bakeLog: recipe.bakeLog || [] });
+    recipes.push({ ...recipe, bakeLog: recipe.bakeLog || [], notes: recipe.notes || "" });
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
 }
@@ -172,7 +176,7 @@ export function importRecipesFromJSON(json: string): { added: number; skipped: n
       skipped++;
       continue;
     }
-    existing.push({ ...recipe, bakeLog: recipe.bakeLog || [] });
+    existing.push({ ...recipe, bakeLog: recipe.bakeLog || [], notes: recipe.notes || "" });
     existingIds.add(recipe.id);
     added++;
   }

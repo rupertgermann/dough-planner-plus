@@ -194,6 +194,7 @@ export function extractJsonLdRecipe(html: string): ImportedRecipeDraft | null {
     const draft = {
       name: getString(recipeNode.name) || "Imported Recipe",
       description: getString(recipeNode.description),
+      notes: "",
       tags: keywordValues,
       ingredients: asArray(recipeNode.recipeIngredient)
         .map((entry) => getString(entry))

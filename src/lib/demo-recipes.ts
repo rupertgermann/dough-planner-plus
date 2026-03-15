@@ -1,6 +1,6 @@
 import { Recipe } from "@/types/recipe";
 
-export const DEMO_RECIPES: Omit<Recipe, "bakeLog">[] = [
+const DEMO_RECIPES_BASE: Array<Omit<Recipe, "bakeLog" | "notes">> = [
   {
     id: "demo-1", name: "Classic Sourdough", description: "A crusty, tangy sourdough with an open crumb.",
     tags: ["Sourdough"],
@@ -285,3 +285,8 @@ export const DEMO_RECIPES: Omit<Recipe, "bakeLog">[] = [
     createdAt: "2026-03-02T00:00:00Z", updatedAt: "2026-03-02T00:00:00Z",
   },
 ];
+
+export const DEMO_RECIPES: Omit<Recipe, "bakeLog">[] = DEMO_RECIPES_BASE.map((recipe) => ({
+  ...recipe,
+  notes: "",
+}));

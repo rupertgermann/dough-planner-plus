@@ -70,7 +70,7 @@ npm install
 cp .env.example .env
 ```
 
-Set `OPENAI_API_KEY` in `.env`. The optional `OPENAI_RECIPE_IMPORT_MODEL` variable selects the OpenAI model used for recipe extraction and defaults to `gpt-4.1-mini`.
+Set `OPENAI_API_KEY` in `.env`. The optional `OPENAI_RECIPE_IMPORT_MODEL` variable selects the OpenAI model used for recipe extraction and defaults to `gpt-5-mini`.
 
 ## Commands
 
@@ -122,7 +122,7 @@ The repository includes [.env.example](.env.example):
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
-OPENAI_RECIPE_IMPORT_MODEL=gpt-4.1-mini
+OPENAI_RECIPE_IMPORT_MODEL=gpt-5-mini
 ```
 
 `OPENAI_API_KEY` is read only on the server-side import path. The browser never calls OpenAI directly.

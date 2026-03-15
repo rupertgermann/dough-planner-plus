@@ -5,6 +5,10 @@ import {
   RecipeImportResponseSchema,
   RecipeImportSource,
 } from "./import-schema";
+import {
+  convertIngredientMeasurementToMetric,
+  convertTextMeasurementsToMetric,
+} from "./measurement-conversion";
 import { PRESET_TAGS, Recipe } from "../../types/recipe";
 
 function generateImportId(): string {
@@ -86,25 +90,55 @@ export function normalizeImportedTags(tags: Array<string | undefined | null>): s
 
 export function normalizeImportedRecipeDraft(
   draft: ImportedRecipeDraft,
-  options: { fallbackName?: string; extraWarnings?: string[] } = {},
+  options: {
+    fallbackName?: string;
+    extraWarnings?: string[];
+    convertMeasurements?: boolean;
+  } = {},
 ): ImportedRecipeDraft {
   const fallbackName = normalizeText(options.fallbackName) || "Imported Recipe";
+  const shouldConvertMeasurements = options.convertMeasurements ?? true;
 
   const normalizedDraft: ImportedRecipeDraft = {
     name: normalizeText(draft.name) || fallbackName,
-    description: normalizeMultilineText(draft.description),
+    description: shouldConvertMeasurements
+      ? convertTextMeasurementsToMetric(normalizeMultilineText(draft.description))
+      : normalizeMultilineText(draft.description),
+    notes: shouldConvertMeasurements
+      ? convertTextMeasurementsToMetric(normalizeMultilineText(draft.notes))
+      : normalizeMultilineText(draft.notes),
     tags: normalizeImportedTags(draft.tags),
     ingredients: draft.ingredients
-      .map((ingredient) => ({
-        name: normalizeText(ingredient.name),
-        amount: normalizeText(ingredient.amount),
-        unit: normalizeText(ingredient.unit),
-      }))
+      .map((ingredient) => {
+        const normalizedIngredient = {
+          name: normalizeText(ingredient.name),
+          amount: normalizeText(ingredient.amount),
+          unit: normalizeText(ingredient.unit),
+        };
+
+        if (!shouldConvertMeasurements) {
+          return normalizedIngredient;
+        }
+
+        return {
+          ...normalizedIngredient,
+          ...convertIngredientMeasurementToMetric(
+            normalizedIngredient.amount,
+            normalizedIngredient.unit,
+          ),
+        };
+      })
       .filter((ingredient) => ingredient.name),
     steps: draft.steps
       .map((step) => {
-        const instructions = normalizeMultilineText(step.instructions);
-        const normalizedName = normalizeText(step.name) || instructions.slice(0, 50);
+        const rawInstructions = normalizeMultilineText(step.instructions);
+        const instructions = shouldConvertMeasurements
+          ? convertTextMeasurementsToMetric(rawInstructions)
+          : rawInstructions;
+        const rawName = normalizeText(step.name);
+        const normalizedName = shouldConvertMeasurements
+          ? convertTextMeasurementsToMetric(rawName || instructions.slice(0, 50))
+          : rawName || instructions.slice(0, 50);
 
         return {
           name: normalizedName.slice(0, 50),
@@ -137,8 +171,9 @@ export function buildImportResponse(
   warnings: string[] = [],
 ): RecipeImportResponse {
   const mergedWarnings = normalizeImportWarnings([...recipe.warnings, ...warnings]);
-  const normalizedRecipe = normalizeImportedRecipeDraft(recipe, {
-    extraWarnings: mergedWarnings,
+  const normalizedRecipe = ImportedRecipeDraftSchema.parse({
+    ...recipe,
+    warnings: mergedWarnings,
   });
 
   return RecipeImportResponseSchema.parse({
@@ -149,13 +184,16 @@ export function buildImportResponse(
 }
 
 export function createRecipeFromImportDraft(draft: ImportedRecipeDraft): Recipe {
-  const normalizedDraft = normalizeImportedRecipeDraft(draft);
+  const normalizedDraft = normalizeImportedRecipeDraft(draft, {
+    convertMeasurements: false,
+  });
   const now = new Date().toISOString();
 
   return {
     id: generateImportId(),
     name: normalizedDraft.name,
     description: normalizedDraft.description,
+    notes: normalizedDraft.notes,
     tags: normalizedDraft.tags,
     bakeLog: [],
     ingredients: normalizedDraft.ingredients.map((ingredient) => ({
