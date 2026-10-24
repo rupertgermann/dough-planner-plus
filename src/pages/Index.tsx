@@ -209,7 +209,7 @@ const Index = () => {
                   variant={activeTag === null ? "default" : "outline"}
                   className={`cursor-pointer transition-base select-none ${
                     activeTag === null
-                      ? "bg-brass text-primary-foreground"
+                      ? "bg-brass text-stone-950"
                       : "border-brass/30 text-muted-foreground hover:border-brass/60 hover:text-foreground"
                   }`}
                   onClick={() => setActiveTag(null)}
@@ -222,7 +222,7 @@ const Index = () => {
                     variant={activeTag === tag ? "default" : "outline"}
                     className={`cursor-pointer transition-base select-none ${
                       activeTag === tag
-                        ? "bg-brass text-primary-foreground"
+                        ? "bg-brass text-stone-950"
                         : "border-brass/30 text-muted-foreground hover:border-brass/60 hover:text-foreground"
                     }`}
                     onClick={() => setActiveTag(activeTag === tag ? null : tag)}
