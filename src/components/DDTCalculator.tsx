@@ -120,17 +120,17 @@ export function DDTCalculator({ ingredients = [] }: DDTCalculatorProps) {
             />
           </div>
         </div>
-        <div className="mt-4 flex items-center gap-2 rounded-lg bg-accent/30 px-4 py-3">
-          <span className="text-sm text-muted-foreground">Use water at</span>
+        <div className="mt-4 flex items-center gap-2 rounded-lg bg-muted/50 px-4 py-3">
+          <span className="text-sm text-foreground">Use water at</span>
           <span
             className={`text-xl font-bold font-mono-tech ${
-              waterTemp < 0 || waterTemp > 50 ? "text-destructive" : "text-neon neon-glow"
+              waterTemp < 0 || waterTemp > 50 ? "text-red-700 dark:text-red-400" : "text-neon dark:neon-glow"
             }`}
           >
             {waterTemp.toFixed(1)}°C
           </span>
           {(waterTemp < 0 || waterTemp > 50) && (
-            <span className="text-xs text-destructive">
+            <span className="text-xs text-red-700 dark:text-red-400">
               (out of practical range — adjust inputs)
             </span>
           )}

@@ -9,7 +9,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
-      className="hover:bg-brass/10 transition-base"
+      className="hover:bg-brass/10 hover:text-foreground transition-base"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       title="Toggle theme"
     >

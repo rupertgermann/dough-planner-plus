@@ -153,7 +153,7 @@ const RecipeDetail = () => {
       <header className="relative border-b border-brass/20 glass-heavy print:bg-[white] print:border-[#ddd]">
         <div className="absolute inset-x-0 bottom-0 divider-glow print:hidden" />
         <div className="container mx-auto flex items-center gap-3 px-4 py-4 sm:py-6 flex-wrap">
-          <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10 print:hidden">
+          <Button asChild variant="ghost" size="icon" className="hover:bg-brass/10 hover:text-foreground print:hidden">
             <Link to="/">
               <ArrowLeft className="h-5 w-5" />
             </Link>
@@ -171,7 +171,7 @@ const RecipeDetail = () => {
             <Button
               variant="outline"
               size="sm"
-              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base"
+              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 hover:text-foreground transition-base"
               onClick={handleDuplicate}
             >
               <Copy className="mr-1.5 h-3.5 w-3.5" />
@@ -180,7 +180,7 @@ const RecipeDetail = () => {
             <Button
               variant="outline"
               size="sm"
-              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 transition-base"
+              className="border-brass/30 hover:border-brass/60 hover:bg-brass/10 hover:text-foreground transition-base"
               onClick={handlePrint}
             >
               <Printer className="mr-1.5 h-3.5 w-3.5" />
@@ -197,7 +197,7 @@ const RecipeDetail = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/60 transition-base"
+                  className="border-destructive/30 text-red-700 hover:bg-destructive/10 hover:border-destructive/60 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-base"
                 >
                   <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Delete</span>
