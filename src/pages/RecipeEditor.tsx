@@ -269,7 +269,7 @@ const RecipeEditor = () => {
                     </Badge>
                   );
                 })}
-                {tags.filter((t) => !PRESET_TAGS.includes(t as any)).map((tag) => (
+                {tags.filter((t) => !PRESET_TAGS.some((preset) => preset === t)).map((tag) => (
                   <Badge
                     key={tag}
                     variant="default"

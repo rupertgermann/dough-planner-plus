@@ -3,21 +3,10 @@ import { zodSchema } from "ai";
 import { ImportedRecipeDraftSchema } from "@/lib/import/import-schema";
 
 describe("ImportedRecipeDraftSchema", () => {
-  it("produces a strict ingredient schema compatible with OpenAI structured outputs", () => {
-    const schemaResult = zodSchema(ImportedRecipeDraftSchema, {
+  it("produces a strict ingredient schema compatible with OpenAI structured outputs", async () => {
+    const jsonSchema = await zodSchema(ImportedRecipeDraftSchema, {
       useReferences: false,
-    }) as { jsonSchema?: Record<string, unknown> } & Record<string, unknown>;
-
-    const jsonSchema = (schemaResult.jsonSchema ?? schemaResult) as {
-      properties?: {
-        ingredients?: {
-          items?: {
-            required?: string[];
-          };
-        };
-      };
-      required?: string[];
-    };
+    }).jsonSchema;
 
     expect(jsonSchema.required).toEqual([
       "name",
@@ -29,10 +18,10 @@ describe("ImportedRecipeDraftSchema", () => {
       "warnings",
     ]);
 
-    expect(jsonSchema.properties?.ingredients?.items?.required).toEqual([
-      "name",
-      "amount",
-      "unit",
-    ]);
+    expect(jsonSchema).toMatchObject({
+      properties: {
+        ingredients: { items: { required: ["name", "amount", "unit"] } },
+      },
+    });
   });
 });
