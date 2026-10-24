@@ -460,17 +460,17 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                 {(entry.crumbRating || entry.ovenSpring || entry.crustColor) && (
                   <div className="flex flex-wrap gap-2 text-[10px] font-mono-tech">
                     {entry.crumbRating && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/40 px-2 py-0.5 text-accent-foreground">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-accent-foreground">
                         Crumb {entry.crumbRating}/5
                       </span>
                     )}
                     {entry.ovenSpring && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/40 px-2 py-0.5 text-accent-foreground">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-accent-foreground">
                         Spring {entry.ovenSpring}/5
                       </span>
                     )}
                     {entry.crustColor && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/40 px-2 py-0.5 text-accent-foreground">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-accent-foreground">
                         Crust: {entry.crustColor}
                       </span>
                     )}
@@ -491,7 +491,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
 
       {/* Lightbox */}
       <Dialog open={!!lightboxSrc} onOpenChange={() => setLightboxSrc(null)}>
-        <DialogContent className="max-w-3xl border-brass/20 glass-heavy p-2">
+        <DialogContent className="max-w-3xl border-brass/20 glass-heavy p-2 [&>button]:bg-background [&>button]:text-foreground [&>button]:opacity-100">
           <DialogTitle className="sr-only">Photo preview</DialogTitle>
           {lightboxSrc && (
             <img
