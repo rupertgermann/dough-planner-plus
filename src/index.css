@@ -24,10 +24,10 @@
     --muted: 45 25% 94%;
     --muted-foreground: 30 15% 40%;
 
-    --accent: 157 55% 35%;
+    --accent: 157 55% 27%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 38 30% 85%;
@@ -45,9 +45,11 @@
     --sidebar-border: 38 25% 85%;
     --sidebar-ring: 38 85% 45%;
 
-    --neon: 157 55% 35%;
-    --neon-cyan: 185 55% 38%;
+    --neon: 157 55% 27%;
+    --neon-cyan: 185 55% 28%;
     --brass: 38 85% 45%;
+    --brass-text: 38 85% 28%;
+    --brass-highlight: 38 75% 32%;
     --copper: 22 65% 40%;
     --ember: 15 75% 45%;
     --violet-glow: 270 50% 50%;
@@ -106,7 +108,9 @@
     --neon: 157 100% 49%;
     --neon-cyan: 185 100% 55%;
     --brass: 38 85% 52%;
-    --copper: 22 75% 45%;
+    --brass-text: 38 85% 52%;
+    --brass-highlight: 45 90% 68%;
+    --copper: 22 75% 52%;
     --ember: 15 90% 55%;
     --violet-glow: 270 80% 65%;
 
@@ -226,8 +230,12 @@
     background: linear-gradient(90deg, transparent, hsl(var(--brass) / 0.4), hsl(var(--neon) / 0.2), hsl(var(--brass) / 0.4), transparent);
   }
 
+  .text-brass {
+    color: hsl(var(--brass-text));
+  }
+
   .text-gradient-brass {
-    background: linear-gradient(135deg, hsl(var(--brass)), hsl(45 90% 68%), hsl(var(--copper)));
+    background: linear-gradient(135deg, hsl(var(--brass-text)), hsl(var(--brass-highlight)), hsl(var(--copper)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
