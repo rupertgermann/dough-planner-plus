@@ -65,7 +65,7 @@ function parseDurationMinutes(value: unknown): number {
 
 function parseIngredientEntry(entry: string) {
   const cleaned = entry.replace(/^[-•*]\s*/, "").trim();
-  const match = cleaned.match(/^([\d./½¼¾⅓⅔⅛]+)\s*([a-zA-Z]{1,8})?\s+(.+)/);
+  const match = cleaned.match(/^(\d+\s+\d+\/\d+|\d+(?:\.\d+)?\s*[½¼¾⅓⅔⅛]|[\d./½¼¾⅓⅔⅛]+)\s*([a-zA-Z]{1,8})?\s+(.+)/);
 
   if (!match) {
     return {

@@ -2,6 +2,20 @@ import { describe, expect, it } from "vitest";
 import { extractJsonLdRecipe } from "../../../server/lib/extract-jsonld-recipe";
 
 describe("extractJsonLdRecipe", () => {
+
+  it.each([
+    ["1½", "355"],
+    ["1 ½", "355"],
+    ["1 1/2", "355"],
+    ["½", "118"],
+    ["1/2", "118"],
+  ])("preserves %s cups through metric normalization", (amount, metric) => {
+    const result = extractJsonLdRecipe(`<script type="application/ld+json">${JSON.stringify({
+      "@type": "Recipe", name: "Test Loaf", recipeIngredient: [`${amount} cups water`], recipeInstructions: ["Mix water."],
+    })}</script>`);
+    expect(result?.ingredients[0]).toEqual({ name: "water", amount: metric, unit: `ml (${amount} cups)` });
+  });
+
   it("maps schema.org recipe JSON-LD into an import draft", () => {
     const html = `
       <html>

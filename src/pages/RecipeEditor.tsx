@@ -92,23 +92,27 @@ const RecipeEditor = () => {
       return;
     }
 
-    const existingRecipe = isNew ? null : getRecipe(id!);
-    const recipe: Recipe = {
-      id: isNew ? generateId() : id!,
-      name: name.trim(),
-      description: description.trim(),
-      notes: notes.trim(),
-      tags,
-      bakeLog: existingRecipe?.bakeLog || [],
-      ingredients: ingredients.filter((i) => i.name.trim()),
-      steps: steps.filter((s) => s.name.trim()),
-      createdAt: isNew ? new Date().toISOString() : existingRecipe?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    try {
+      const existingRecipe = isNew ? null : getRecipe(id!);
+      const recipe: Recipe = {
+        id: isNew ? generateId() : id!,
+        name: name.trim(),
+        description: description.trim(),
+        notes: notes.trim(),
+        tags,
+        bakeLog: existingRecipe?.bakeLog || [],
+        ingredients: ingredients.filter((i) => i.name.trim()),
+        steps: steps.filter((s) => s.name.trim()),
+        createdAt: isNew ? new Date().toISOString() : existingRecipe?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-    saveRecipe(recipe);
-    toast.success(isNew ? "Recipe created!" : "Recipe updated!");
-    navigate(`/view/${recipe.id}`);
+      saveRecipe(recipe);
+      toast.success(isNew ? "Recipe created!" : "Recipe updated!");
+      navigate(`/view/${recipe.id}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update recipe storage.");
+    }
   }, [name, description, notes, tags, ingredients, steps, isNew, id, navigate]);
 
   useKeyboardShortcuts(useMemo(() => [

@@ -17,6 +17,7 @@ import { BatchCost } from "@/components/BatchCost";
 import MarkdownContent from "@/components/MarkdownContent";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { defaultReadyTime } from "@/lib/ready-time";
 
 const FLOUR_KEYWORDS = ["flour", "mehl", "farine", "harina"];
 
@@ -24,16 +25,9 @@ const RecipeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [readyTime, setReadyTime] = useState(() => {
-    const d = new Date();
-    d.setHours(d.getHours() + 6);
-    d.setMinutes(0);
-    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  });
-  const [readyDate, setReadyDate] = useState(() => {
-    const d = new Date();
-    return d.toISOString().split("T")[0];
-  });
+  const [initialReady] = useState(defaultReadyTime);
+  const [readyTime, setReadyTime] = useState(initialReady.time);
+  const [readyDate, setReadyDate] = useState(initialReady.date);
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
@@ -51,9 +45,7 @@ const RecipeDetail = () => {
 
   const timeline = useMemo(() => {
     if (!recipe || !recipe.steps.length) return [];
-    const [hours, minutes] = readyTime.split(":").map(Number);
-    const ready = new Date(readyDate);
-    ready.setHours(hours, minutes, 0, 0);
+    const ready = new Date(`${readyDate}T${readyTime}`);
     const entries: { step: typeof recipe.steps[0]; startTime: Date; endTime: Date }[] = [];
     let cursor = new Date(ready);
     for (let i = recipe.steps.length - 1; i >= 0; i--) {
@@ -101,18 +93,26 @@ const RecipeDetail = () => {
 
   const handleDuplicate = () => {
     if (!recipe) return;
-    const dup = duplicateRecipe(recipe.id);
-    if (dup) {
-      toast.success(`Duplicated as "${dup.name}"`);
-      navigate(`/recipe/${dup.id}`);
+    try {
+      const dup = duplicateRecipe(recipe.id);
+      if (dup) {
+        toast.success(`Duplicated as "${dup.name}"`);
+        navigate(`/recipe/${dup.id}`);
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update recipe storage.");
     }
   };
 
   const handleDelete = () => {
     if (!recipe) return;
-    deleteRecipe(recipe.id);
-    toast.success("Recipe deleted");
-    navigate("/");
+    try {
+      deleteRecipe(recipe.id);
+      toast.success("Recipe deleted");
+      navigate("/");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update recipe storage.");
+    }
   };
 
   // Arrow key navigation between recipes
@@ -279,9 +279,9 @@ const RecipeDetail = () => {
             )}
             <ul className="space-y-2">
               {recipe.ingredients.map((ing) => {
-                const rawAmount = parseFloat(ing.amount);
-                const scaledAmount = !isNaN(rawAmount)
-                  ? (rawAmount * scale).toFixed(scale === 1 ? 0 : 1).replace(/\.0$/, "")
+                const rawAmount = Number(ing.amount);
+                const scaledAmount = scale !== 1 && ing.amount.trim() && Number.isFinite(rawAmount)
+                  ? String(Number((rawAmount * scale).toPrecision(12)))
                   : ing.amount;
                 const pct = bakersPercentages.get(ing.id);
 

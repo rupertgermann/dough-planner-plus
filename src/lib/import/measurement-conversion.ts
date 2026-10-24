@@ -65,7 +65,7 @@ const INGREDIENT_UNIT_MAP: Array<{
 ];
 
 function normalizeNumericText(value: string): string {
-  return value.replace(/[½¼¾⅓⅔⅛]/g, (match) => UNICODE_FRACTIONS[match] ?? match);
+  return value.replace(/[½¼¾⅓⅔⅛]/g, (match) => ` ${UNICODE_FRACTIONS[match] ?? match}`);
 }
 
 function formatMetricValue(value: number, metricUnit: string): string {
@@ -194,7 +194,7 @@ function convertLengthText(text: string): string {
 
 function convertInlineUnitText(text: string): string {
   return text.replace(
-    /\b(\d+(?:\.\d+)?(?:\s+\d+\/\d+)?|\d+\/\d+)\s+(cups?|tablespoons?|tbsp\.?|tbsps\.?|teaspoons?|tsp\.?|tsps\.?|fluid ounces?|fl\.?\s?oz\.?|ounces?|oz\.?|pounds?|lbs?\.?)\b/gi,
+    /(?<![\w/])(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:\.\d+)?\s*[½¼¾⅓⅔⅛]|[½¼¾⅓⅔⅛]|\d+(?:\.\d+)?)\s+(cups?|tablespoons?|tbsp\.?|tbsps\.?|teaspoons?|tsp\.?|tsps\.?|fluid ounces?|fl\.?\s?oz\.?|ounces?|oz\.?|pounds?|lbs?\.?)\b/gi,
     (match, amount, unit, offset, source) => {
       if (offset > 0 && source[offset - 1] === "(") {
         return match;

@@ -1,19 +1,6 @@
 import { ImportedRecipeDraft } from "./import-schema";
 import { normalizeImportedRecipeDraft } from "./normalize-import";
 
-const UNICODE_FRACTIONS: Record<string, string> = {
-  "½": "1/2",
-  "¼": "1/4",
-  "¾": "3/4",
-  "⅓": "1/3",
-  "⅔": "2/3",
-  "⅛": "1/8",
-};
-
-function normalizeIngredientLine(line: string): string {
-  return line.replace(/[½¼¾⅓⅔⅛]/g, (match) => UNICODE_FRACTIONS[match] ?? match);
-}
-
 function parseDurationMinutes(line: string): number {
   const durationMatch = line.match(/(\d+)\s*(min|mins|minute|minutes|hour|hours|hr|hrs|h)\b/i);
 
@@ -32,7 +19,7 @@ function parseDurationMinutes(line: string): number {
 }
 
 function looksLikeIngredientLine(line: string): boolean {
-  return /^[-•*]/.test(line) || /^\d/.test(line) || /^\d+\s*\/\s*\d+/.test(line);
+  return /^[-•*]/.test(line) || /^[\d½¼¾⅓⅔⅛]/.test(line) || /^\d+\s*\/\s*\d+/.test(line);
 }
 
 function inferRecipeName(lines: string[]): string {
@@ -88,8 +75,8 @@ export function quickParseRecipeText(text: string): ImportedRecipeDraft {
     }
 
     if (section === "ingredients" || (section === "unknown" && looksLikeIngredientLine(line) && !lower.includes("min"))) {
-      const normalizedLine = normalizeIngredientLine(line.replace(/^[-•*]\s*/, ""));
-      const match = normalizedLine.match(/^([\d./]+)\s*([a-zA-Z]{1,8})?\s+(.+)/);
+      const normalizedLine = line.replace(/^[-•*]\s*/, "");
+      const match = normalizedLine.match(/^(\d+\s+\d+\/\d+|\d+(?:\.\d+)?\s*[½¼¾⅓⅔⅛]|[\d./½¼¾⅓⅔⅛]+)\s*([a-zA-Z]{1,8})?\s+(.+)/);
 
       if (match) {
         ingredients.push({

@@ -88,22 +88,34 @@ const Index = () => {
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const handleDelete = (id: string) => {
-    deleteRecipe(id);
-    setRecipes(getRecipes());
+    try {
+      deleteRecipe(id);
+      setRecipes(getRecipes());
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update recipe storage.");
+    }
   };
 
   const handleDuplicate = (id: string) => {
-    const dup = duplicateRecipe(id);
-    if (dup) {
-      toast.success(`Duplicated as "${dup.name}"`);
-      setRecipes(getRecipes());
-      navigate(`/recipe/${dup.id}`);
+    try {
+      const dup = duplicateRecipe(id);
+      if (dup) {
+        toast.success(`Duplicated as "${dup.name}"`);
+        setRecipes(getRecipes());
+        navigate(`/recipe/${dup.id}`);
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update recipe storage.");
     }
   };
 
   const handleLoadDemos = () => {
-    DEMO_RECIPES.forEach((r) => saveRecipe({ ...r, bakeLog: [] }));
-    setRecipes(getRecipes());
+    try {
+      DEMO_RECIPES.forEach((r) => saveRecipe({ ...r, bakeLog: [] }));
+      setRecipes(getRecipes());
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update recipe storage.");
+    }
   };
 
   const btnOutlineClass = "border-brass/20 hover:border-brass/50 hover:bg-brass/5 hover:text-foreground transition-base";

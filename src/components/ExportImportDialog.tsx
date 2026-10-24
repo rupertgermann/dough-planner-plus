@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { exportRecipesJSON, importRecipesFromJSON } from "@/lib/storage";
+import { exportRecipesJSON, importRecipesFromJSON, RecipeStorageError } from "@/lib/storage";
 import { toast } from "sonner";
 
 interface Props {
@@ -21,15 +21,19 @@ export function ExportImportDialog({ onImported }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
-    const json = exportRecipesJSON();
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `bread-planner-recipes-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success("Recipes exported!");
+    try {
+      const json = exportRecipesJSON();
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `bread-planner-recipes-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Recipes exported!");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Recipes could not be exported");
+    }
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,12 +42,12 @@ export function ExportImportDialog({ onImported }: Props) {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const { added, skipped } = importRecipesFromJSON(reader.result as string);
+        const { added, skipped } = importRecipesFromJSON(typeof reader.result === "string" ? reader.result : "");
         toast.success(`Imported ${added} recipe${added !== 1 ? "s" : ""}${skipped ? ` (${skipped} skipped)` : ""}`);
         onImported();
         setOpen(false);
-      } catch {
-        toast.error("Invalid JSON file — please check the format");
+      } catch (error) {
+        toast.error(error instanceof RecipeStorageError ? error.message : "Invalid JSON file — please check the format");
       }
     };
     reader.readAsText(file);

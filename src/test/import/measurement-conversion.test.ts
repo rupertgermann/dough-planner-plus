@@ -6,6 +6,23 @@ import {
 import { normalizeImportedRecipeDraft } from "@/lib/import/normalize-import";
 
 describe("measurement conversion", () => {
+
+  it.each([
+    ["1½", "355"],
+    ["1 ½", "355"],
+    ["1 1/2", "355"],
+    ["½", "118"],
+    ["1/2", "118"],
+  ])("preserves %s cups through metric normalization", (amount, metric) => {
+    expect(convertIngredientMeasurementToMetric(amount, "cups")).toEqual({
+      amount: metric,
+      unit: `ml (${amount} cups)`,
+    });
+    expect(convertTextMeasurementsToMetric(`Add ${amount} cups water.`)).toBe(
+      `Add ${metric} ml (${amount} cups) water.`,
+    );
+  });
+
   it("converts common imperial ingredient units to metric and keeps the original in brackets", () => {
     expect(convertIngredientMeasurementToMetric("2", "cups")).toEqual({
       amount: "473",
