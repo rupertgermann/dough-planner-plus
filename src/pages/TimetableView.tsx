@@ -254,12 +254,12 @@ const TimetableView = () => {
                   </div>
 
                   <Card className={`flex-1 card-glow card-hover border-brass/10 glass min-w-0 ${
-                    isRunning ? "border-neon/30 neon-border" : isFinished ? "border-brass/30 opacity-70" : ""
+                    isRunning ? "border-neon/30 neon-border" : isFinished ? "border-brass/30" : ""
                   }`}>
                     <CardContent className="p-3 sm:p-4">
                       <div className="flex items-start justify-between gap-2 flex-wrap">
                         <div className="min-w-0 flex-1">
-                          <h3 className={`font-semibold text-foreground ${isFinished ? "line-through opacity-60" : ""}`}>
+                          <h3 className={`font-semibold text-foreground ${isFinished ? "line-through" : ""}`}>
                             {step.name}
                           </h3>
                           {step.instructions && (
@@ -302,7 +302,7 @@ const TimetableView = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 px-2 text-xs text-warning hover:bg-warning/10"
+                              className="h-7 px-2 text-xs text-brass hover:bg-warning/10"
                               onClick={() => pauseTimer(step.id)}
                             >
                               <Pause className="h-3 w-3 mr-1" />
