@@ -295,26 +295,28 @@ const Index = () => {
                     <p className="line-clamp-2 text-sm text-muted-foreground">
                       {recipe.description || "No description"}
                     </p>
-                    <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground font-mono-tech">
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5 text-neon" />
-                        <span className="text-gradient-neon font-medium">
-                          {formatDuration(totalMinutes(recipe))}
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 text-xs text-muted-foreground font-mono-tech">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                        <span className="flex items-center gap-1.5 whitespace-nowrap">
+                          <Clock className="h-3.5 w-3.5 shrink-0 text-neon" />
+                          <span className="text-gradient-neon font-medium">
+                            {formatDuration(totalMinutes(recipe))}
+                          </span>
                         </span>
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-brass/50" />
-                        {recipe.ingredients.length} ingredient{recipe.ingredients.length !== 1 ? "s" : ""}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-brass/50" />
-                        {recipe.steps.length} step{recipe.steps.length !== 1 ? "s" : ""}
-                      </span>
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                          <span className="h-1 w-1 rounded-full bg-brass/50" />
+                          {recipe.ingredients.length} ingredient{recipe.ingredients.length !== 1 ? "s" : ""}
+                        </span>
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                          <span className="h-1 w-1 rounded-full bg-brass/50" />
+                          {recipe.steps.length} step{recipe.steps.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
                       <TooltipProvider delayDuration={300}>
-                        <span className="ml-auto flex items-center gap-1" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                        <span className="ml-auto flex shrink-0 items-center gap-1" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-brass/10 transition-base" onClick={() => navigate(`/recipe/${recipe.id}`)}>
+                              <Button aria-label={`Edit ${recipe.name}`} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-brass/10 transition-base" onClick={() => navigate(`/recipe/${recipe.id}`)}>
                                   <Pencil className="h-3.5 w-3.5" />
                               </Button>
                             </TooltipTrigger>
@@ -322,7 +324,7 @@ const Index = () => {
                           </Tooltip>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-7 w-7 text-neon hover:bg-neon/10 transition-base" onClick={() => navigate(`/timetable/${recipe.id}`)}>
+                              <Button aria-label={`Timetable for ${recipe.name}`} variant="ghost" size="icon" className="h-8 w-8 text-neon hover:bg-neon/10 transition-base" onClick={() => navigate(`/timetable/${recipe.id}`)}>
                                   <CalendarClock className="h-3.5 w-3.5" />
                               </Button>
                             </TooltipTrigger>
@@ -335,7 +337,8 @@ const Index = () => {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
+                                    aria-label={`Delete ${recipe.name}`}
+                                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </Button>
