@@ -256,7 +256,7 @@ const RecipeEditor = () => {
                       variant={active ? "default" : "outline"}
                       className={`cursor-pointer transition-base select-none ${
                         active
-                          ? "bg-brass text-primary-foreground hover:bg-brass/80"
+                          ? "bg-brass text-stone-950 hover:bg-brass/80"
                           : "border-brass/30 text-muted-foreground hover:border-brass/60 hover:text-foreground"
                       }`}
                       onClick={() =>
@@ -273,7 +273,7 @@ const RecipeEditor = () => {
                   <Badge
                     key={tag}
                     variant="default"
-                    className="cursor-pointer transition-base select-none bg-brass text-primary-foreground hover:bg-brass/80"
+                    className="cursor-pointer transition-base select-none bg-brass text-stone-950 hover:bg-brass/80"
                     onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
                   >
                     {tag} ×
