@@ -4,7 +4,8 @@
       "WebSearch",
       "Bash(npx *)",
       "Bash(npm *)",
-      "Bash(grep *)"
+      "Bash(grep *)",
+      "Bash(git *)"
     ]
   }
 }
