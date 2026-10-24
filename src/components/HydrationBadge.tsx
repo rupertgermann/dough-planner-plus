@@ -30,7 +30,7 @@ export function HydrationBadge({ ingredients, scale = 1 }: Props) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="inline-flex items-center gap-1 rounded-full bg-accent/50 px-2.5 py-0.5 text-xs font-semibold font-mono-tech text-accent-foreground print:bg-transparent print:text-[#444]">
+        <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold font-mono-tech text-accent-foreground print:bg-transparent print:text-[#444]">
           <Droplets className="h-3 w-3" />
           {hydration}%
         </span>
