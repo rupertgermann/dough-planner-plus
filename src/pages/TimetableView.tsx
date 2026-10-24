@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Cog, Play, Pause, RotateCcw, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,30 +9,22 @@ import { Badge } from "@/components/ui/badge";
 import { getRecipe } from "@/lib/storage";
 import { Recipe } from "@/types/recipe";
 import { toast } from "sonner";
+import { defaultReadyTime } from "@/lib/ready-time";
 
-interface TimerState {
-  stepId: string;
-  remainingSeconds: number;
-  running: boolean;
-}
+type TimerState =
+  | { running: true; deadline: number }
+  | { running: false; remainingMs: number };
 
 const TimetableView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [readyTime, setReadyTime] = useState(() => {
-    const d = new Date();
-    d.setHours(d.getHours() + 6);
-    d.setMinutes(0);
-    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  });
-  const [readyDate, setReadyDate] = useState(() => {
-    const d = new Date();
-    return d.toISOString().split("T")[0];
-  });
+  const [initialReady] = useState(defaultReadyTime);
+  const [readyTime, setReadyTime] = useState(initialReady.time);
+  const [readyDate, setReadyDate] = useState(initialReady.date);
   const [timers, setTimers] = useState<Map<string, TimerState>>(new Map());
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const intervalRef = useRef<number | null>(null);
+  const [now, setNow] = useState(Date.now);
 
   useEffect(() => {
     if (id) {
@@ -57,69 +49,57 @@ const TimetableView = () => {
     }
   }, []);
 
-  // Timer tick
   useEffect(() => {
-    const hasRunning = Array.from(timers.values()).some((t) => t.running);
-    if (!hasRunning) {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      return;
-    }
+    if (![...timers.values()].some((timer) => timer.running)) return;
 
-    intervalRef.current = window.setInterval(() => {
-      setTimers((prev) => {
-        const next = new Map(prev);
-        let changed = false;
-        next.forEach((timer, key) => {
-          if (timer.running && timer.remainingSeconds > 0) {
-            changed = true;
-            const newRemaining = timer.remainingSeconds - 1;
-            next.set(key, { ...timer, remainingSeconds: newRemaining });
-            if (newRemaining === 0) {
-              next.set(key, { ...timer, remainingSeconds: 0, running: false });
-              // Fire notification
-              const step = recipe?.steps.find((s) => s.id === key);
-              if (notificationsEnabled && "Notification" in window && Notification.permission === "granted") {
-                new Notification("🍞 Step Complete!", {
-                  body: `"${step?.name || "Step"}" is done — time for the next step!`,
-                  icon: "/favicon.ico",
-                });
-              }
-              toast.success(`"${step?.name || "Step"}" timer finished!`);
-            }
-          }
-        });
-        return changed ? next : prev;
-      });
+    const interval = window.setInterval(() => {
+      const current = Date.now();
+      setNow(current);
+      const expired = [...timers].filter(([, timer]) => timer.running && timer.deadline <= current);
+      if (!expired.length) return;
+      clearInterval(interval);
+
+      const next = new Map(timers);
+      for (const [key] of expired) {
+        next.set(key, { running: false, remainingMs: 0 });
+      }
+      setTimers(next);
+      for (const [key] of expired) {
+        const step = recipe?.steps.find((s) => s.id === key);
+        if (notificationsEnabled && "Notification" in window && Notification.permission === "granted") {
+          new Notification("🍞 Step Complete!", {
+            body: `"${step?.name || "Step"}" is done. Time for the next step!`,
+            icon: "/favicon.ico",
+          });
+        }
+        toast.success(`"${step?.name || "Step"}" timer finished!`);
+      }
     }, 1000);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    return () => clearInterval(interval);
   }, [timers, recipe, notificationsEnabled]);
 
   const startTimer = (stepId: string, durationMinutes: number) => {
+    const current = Date.now();
+    setNow(current);
     setTimers((prev) => {
       const next = new Map(prev);
       const existing = next.get(stepId);
-      if (existing && existing.remainingSeconds > 0) {
-        next.set(stepId, { ...existing, running: true });
-      } else {
-        next.set(stepId, {
-          stepId,
-          remainingSeconds: durationMinutes * 60,
-          running: true,
-        });
-      }
+      const remainingMs = existing && existing.running === false && existing.remainingMs > 0
+        ? existing.remainingMs
+        : durationMinutes * 60_000;
+      next.set(stepId, { running: true, deadline: current + remainingMs });
       return next;
     });
   };
 
   const pauseTimer = (stepId: string) => {
+    const current = Date.now();
     setTimers((prev) => {
       const next = new Map(prev);
       const existing = next.get(stepId);
-      if (existing) next.set(stepId, { ...existing, running: false });
+      if (existing?.running) {
+        next.set(stepId, { running: false, remainingMs: Math.max(0, existing.deadline - current) });
+      }
       return next;
     });
   };
@@ -127,11 +107,7 @@ const TimetableView = () => {
   const resetTimer = (stepId: string, durationMinutes: number) => {
     setTimers((prev) => {
       const next = new Map(prev);
-      next.set(stepId, {
-        stepId,
-        remainingSeconds: durationMinutes * 60,
-        running: false,
-      });
+      next.set(stepId, { running: false, remainingMs: durationMinutes * 60_000 });
       return next;
     });
   };
@@ -146,9 +122,7 @@ const TimetableView = () => {
 
   const timeline = useMemo(() => {
     if (!recipe || !recipe.steps.length) return [];
-    const [hours, minutes] = readyTime.split(":").map(Number);
-    const ready = new Date(readyDate);
-    ready.setHours(hours, minutes, 0, 0);
+    const ready = new Date(`${readyDate}T${readyTime}`);
     const entries: { step: typeof recipe.steps[0]; startTime: Date; endTime: Date }[] = [];
     let cursor = new Date(ready);
     for (let i = recipe.steps.length - 1; i >= 0; i--) {
@@ -257,7 +231,10 @@ const TimetableView = () => {
             {timeline.map(({ step, startTime }) => {
               const timer = timers.get(step.id);
               const isRunning = timer?.running || false;
-              const isFinished = timer ? timer.remainingSeconds === 0 : false;
+              const remainingSeconds = timer
+                ? Math.ceil(Math.max(0, timer.running === true ? timer.deadline - now : timer.remainingMs) / 1000)
+                : 0;
+              const isFinished = timer ? !timer.running && remainingSeconds === 0 : false;
 
               return (
                 <div key={step.id} className="relative flex gap-2 sm:gap-4 pb-4 sm:pb-6 group">
@@ -299,9 +276,9 @@ const TimetableView = () => {
 
                       {/* Timer Controls */}
                       <div className="mt-3 flex items-center gap-2 flex-wrap">
-                        {timer && timer.remainingSeconds > 0 && (
+                        {timer && remainingSeconds > 0 && (
                           <span className={`text-lg font-bold font-mono-tech ${isRunning ? "text-neon neon-glow" : "text-foreground"}`}>
-                            {formatCountdown(timer.remainingSeconds)}
+                            {formatCountdown(remainingSeconds)}
                           </span>
                         )}
                         {isFinished && (

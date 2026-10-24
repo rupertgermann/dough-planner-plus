@@ -2,6 +2,22 @@ import { describe, expect, it } from "vitest";
 import { quickParseRecipeText } from "@/lib/import/quick-parse";
 
 describe("quickParseRecipeText", () => {
+
+  it.each([
+    ["1½", "355"],
+    ["1 ½", "355"],
+    ["1 1/2", "355"],
+    ["½", "118"],
+    ["1/2", "118"],
+  ])("preserves %s cups through metric normalization", (amount, metric) => {
+    const result = quickParseRecipeText(`Test Loaf
+Ingredients
+${amount} cups water
+Instructions
+Mix water.`);
+    expect(result.ingredients[0]).toEqual({ name: "water", amount: metric, unit: `ml (${amount} cups)` });
+  });
+
   it("extracts ingredients and steps from structured pasted text", () => {
     const result = quickParseRecipeText(`
       Weekend Sourdough

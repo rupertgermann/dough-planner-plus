@@ -1,4 +1,5 @@
 import { Recipe } from "@/types/recipe";
+import { z } from "zod";
 
 const STORAGE_KEY = "bread-planner-recipes";
 const SEEDED_KEY = "bread-planner-seeded";
@@ -85,32 +86,54 @@ const SAMPLE_RECIPES: Recipe[] = [
   },
 ];
 
-function seedIfNeeded(): void {
-  if (!localStorage.getItem(SEEDED_KEY)) {
-    const existing = localStorage.getItem(STORAGE_KEY);
-    if (!existing || JSON.parse(existing).length === 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_RECIPES));
-    }
-    localStorage.setItem(SEEDED_KEY, "true");
-  }
-}
+const DateSchema = z.string().refine((value) => Number.isFinite(Date.parse(value)), "Invalid date");
 
-// Migrate old recipes that don't have bakeLog
-function migrateRecipes(recipes: Recipe[]): Recipe[] {
-  return recipes.map((r) => ({
-    ...r,
-    bakeLog: r.bakeLog || [],
-    notes: r.notes || "",
-  }));
+const RecipeSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string(),
+  notes: z.string().default(""),
+  tags: z.array(z.string()),
+  ingredients: z.array(z.object({
+    id: z.string().min(1), name: z.string(), amount: z.string(), unit: z.string(),
+    percentage: z.string().optional(),
+  })),
+  steps: z.array(z.object({
+    id: z.string().min(1), name: z.string(),
+    durationMinutes: z.number().finite().nonnegative(), instructions: z.string(),
+  })),
+  bakeLog: z.array(z.object({
+    id: z.string().min(1), date: DateSchema, rating: z.number().finite(),
+    notes: z.string(), changes: z.string(), crumbRating: z.number().finite().optional(),
+    crustColor: z.string().optional(), ovenSpring: z.number().finite().optional(),
+    photos: z.array(z.string()).optional(),
+  })).default([]),
+  createdAt: DateSchema,
+  updatedAt: DateSchema,
+});
+
+export class RecipeStorageError extends Error {
+  constructor() {
+    super("Your recipe storage could not be read. Your saved data has been preserved. Restore access or repair the stored data, then retry.");
+    this.name = "RecipeStorageError";
+  }
 }
 
 export function getRecipes(): Recipe[] {
   try {
-    seedIfNeeded();
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? migrateRecipes(JSON.parse(data)) : [];
+    const recipes = data === null ? [] : z.array(RecipeSchema).parse(JSON.parse(data)) as Recipe[];
+    if (!localStorage.getItem(SEEDED_KEY)) {
+      if (data === null || recipes.length === 0) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_RECIPES));
+        localStorage.setItem(SEEDED_KEY, "true");
+        return structuredClone(SAMPLE_RECIPES);
+      }
+      localStorage.setItem(SEEDED_KEY, "true");
+    }
+    return recipes;
   } catch {
-    return [];
+    throw new RecipeStorageError();
   }
 }
 
@@ -118,7 +141,13 @@ export function getRecipe(id: string): Recipe | undefined {
   return getRecipes().find((r) => r.id === id);
 }
 
-export function saveRecipe(recipe: Recipe): void {
+export function saveRecipe(candidate: Recipe): void {
+  const result = RecipeSchema.safeParse(candidate);
+  if (!result.success) {
+    const issue = result.error.issues[0];
+    throw new Error(`Recipe could not be saved. ${issue.path.join(".")}: ${issue.message}`);
+  }
+  const recipe = result.data as Recipe;
   const recipes = getRecipes();
   const index = recipes.findIndex((r) => r.id === recipe.id);
   if (index >= 0) {
@@ -161,17 +190,19 @@ export function exportRecipesJSON(): string {
 }
 
 export function importRecipesFromJSON(json: string): { added: number; skipped: number } {
-  const incoming: Recipe[] = JSON.parse(json);
+  const incoming: unknown = JSON.parse(json);
   if (!Array.isArray(incoming)) throw new Error("Invalid format: expected an array");
   const existing = getRecipes();
   const existingIds = new Set(existing.map((r) => r.id));
   let added = 0;
   let skipped = 0;
-  for (const recipe of incoming) {
-    if (!recipe.id || !recipe.name || !Array.isArray(recipe.steps)) {
+  for (const record of incoming) {
+    const result = RecipeSchema.safeParse(record);
+    if (!result.success) {
       skipped++;
       continue;
     }
+    const recipe = result.data as Recipe;
     if (existingIds.has(recipe.id)) {
       skipped++;
       continue;

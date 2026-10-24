@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { BakeLogEntry, Recipe } from "@/types/recipe";
-import { generateId, saveRecipe } from "@/lib/storage";
+import { generateId, saveRecipe, RecipeStorageError } from "@/lib/storage";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -191,8 +191,8 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
       setAdding(false);
       resetForm();
       toast.success("Bake logged!");
-    } catch {
-      toast.error("Storage full — try removing old photos or entries");
+    } catch (error) {
+      toast.error(error instanceof RecipeStorageError ? error.message : "Storage full — try removing old photos or entries");
     }
   };
 
@@ -211,9 +211,13 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
       ...recipe,
       bakeLog: entries.filter((e) => e.id !== entryId),
     };
-    saveRecipe(updated);
-    onUpdated(updated);
-    toast.success("Entry removed");
+    try {
+      saveRecipe(updated);
+      onUpdated(updated);
+      toast.success("Entry removed");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update recipe storage.");
+    }
   };
 
   return (

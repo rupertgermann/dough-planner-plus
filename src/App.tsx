@@ -1,3 +1,4 @@
+import { RecipeStorageBoundary } from "@/components/RecipeStorageBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,16 +20,18 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/recipe/:id" element={<RecipeEditor />} />
-            <Route path="/view/:id" element={<RecipeDetail />} />
-            <Route path="/timetable/:id" element={<TimetableView />} />
-            <Route path="/import" element={<ImportRecipe />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <RecipeStorageBoundary>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/recipe/:id" element={<RecipeEditor />} />
+              <Route path="/view/:id" element={<RecipeDetail />} />
+              <Route path="/timetable/:id" element={<TimetableView />} />
+              <Route path="/import" element={<ImportRecipe />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </RecipeStorageBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>

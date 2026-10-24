@@ -142,8 +142,8 @@ const ImportRecipe = () => {
       saveRecipe(recipe);
       toast.success("Recipe saved.");
       navigate(`/recipe/${recipe.id}`);
-    } catch {
-      toast.error("The draft still needs at least one ingredient and one step.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save the recipe.");
     }
   };
 
