@@ -95,7 +95,7 @@ URL imports prefer `schema.org/Recipe` JSON-LD whenever a page exposes it. That 
 Quick parse remains part of the product surface:
 
 - directly as a user action for pasted text
-- indirectly as a fallback when server-side AI extraction fails
+- indirectly as a fallback after a recoverable AI extraction error
 
 ## Shared contracts
 
@@ -139,7 +139,7 @@ Normalization rules:
 1. Validate `{ mode: "text", text }`.
 2. Send the source text to the AI extraction pipeline.
 3. Validate and normalize the returned draft.
-4. Fall back to quick parse if AI extraction fails.
+4. Try quick parse after a recoverable AI extraction error. Missing or invalid credentials are reported to the caller.
 5. Return the draft plus the import source.
 
 ### URL import
@@ -150,7 +150,7 @@ Normalization rules:
 4. Map structured ingredients and steps when possible.
 5. If JSON-LD is insufficient, convert HTML to cleaned source text.
 6. Run AI extraction against the cleaned text.
-7. Fall back to quick parse if AI extraction fails.
+7. Apply the same quick parse fallback rules as text import.
 8. Return the draft plus the import source.
 
 ## Server files

@@ -32,6 +32,15 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </RecipeStorageBoundary>
+        <footer className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t px-4 py-4 text-sm text-muted-foreground print:hidden">
+          <span>Support Dough Planner Plus</span>
+          <a href="https://patreon.com/rupertgermann" target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">
+            Patreon
+          </a>
+          <a href="https://buymeacoffee.com/rupertgermann" target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">
+            Buy Me a Coffee
+          </a>
+        </footer>
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>

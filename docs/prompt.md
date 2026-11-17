@@ -28,6 +28,7 @@ The product centers on four connected tasks:
 ## Current implementation notes
 
 - recipes are stored locally in the browser
+- recipes can be exported and restored from a JSON backup
 - recipe import supports pasted text and recipe page URLs
 - the import pipeline uses shared Zod schemas and normalization rules
 - URL imports are fetched server-side to avoid browser CORS constraints
@@ -62,7 +63,6 @@ The product centers on four connected tasks:
 ## Extension areas
 
 - richer import heuristics for unusual recipe formats
-- export and backup flows
 - notifications and reminders for baking steps
 - broader fixture coverage for real-world recipe pages
 - deployment-specific server adapters
