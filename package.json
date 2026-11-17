@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:mutation": "stryker run",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -69,16 +70,22 @@
     "zod": "^4.6.6"
   },
   "overrides": {
+    "@stryker-mutator/core": {
+      "minimatch": "^11.0.1"
+    },
     "@tailwindcss/typography": {
       "postcss-selector-parser": "^6.1.5"
     },
     "serialize-javascript": "^7.0.4",
+    "qs": "6.16.1",
     "workbox-build": {
       "glob": "^14.0.2"
     }
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@stryker-mutator/core": "^10.1.1",
+    "@stryker-mutator/vitest-runner": "^10.1.1",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.0.0",

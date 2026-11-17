@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "concurrency": 4,
+  "timeoutMS": 10000,
+  "vitest": {
+    "configFile": "vitest.config.ts",
+    "pool": "forks",
+    "related": false
+  },
+  "mutate": [
+    "{api,server,src}/**/*.{ts,tsx}",
+    "!**/*.d.ts",
+    "!**/*.{test,spec}.{ts,tsx}",
+    "!src/test/**",
+    "!src/components/ui/**"
+  ]
+}

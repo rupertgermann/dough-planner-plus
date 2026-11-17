@@ -15,6 +15,10 @@ dist-ssr
 .env.*
 !.env.example
 
+# Mutation testing output
+/.stryker-tmp/
+/reports/mutation/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

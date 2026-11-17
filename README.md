@@ -250,6 +250,12 @@ The repository includes targeted tests for:
 
 Run all tests with `npm run test`.
 
+Run `npm run test:mutation` to check whether the same Vitest suite catches changes StrykerJS makes to the app and server code. Tests, test setup, and the shared UI primitives in `src/components/ui` are excluded from mutation.
+
+Open `reports/mutation/mutation.html` after the run. Start with **Survived** mutations, which ran without failing a test, and **No coverage** mutations, which no test reached. No minimum mutation score is enforced.
+
+A full run can take several minutes. To focus on one file, use `npm run test:mutation -- --mutate src/lib/storage.ts`.
+
 ## Scope
 
 Dough Planner Plus is a focused bread-planning application:
