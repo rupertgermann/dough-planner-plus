@@ -1,6 +1,8 @@
 
 
-# Bread Dough Planner — MVP
+# Bread Dough Planner — Original MVP Plan
+
+This is the original Lovable brief. See the [README](../README.md) for current setup and features and the [import architecture](../docs/ai-recipe-import-plan.md) for the server implementation.
 
 A clean, intuitive app to store bread recipes and generate step-by-step baking timetables.
 

@@ -57,20 +57,20 @@ It covers the full path from rough recipe intake to a structured baking workflow
 
 ## Requirements
 
-- Node.js
+- Node.js 22.12 or later on an LTS release
 - npm
-- `OPENAI_API_KEY` for AI import
+- An OpenAI API key if you want to use AI import
 
 ## Installation
 
 ```sh
-git clone <YOUR_GITHUB_REPO_URL>
+git clone https://github.com/rupertgermann/dough-planner-plus.git
 cd dough-planner-plus
 npm install
 cp .env.example .env
 ```
 
-Set `OPENAI_API_KEY` in `.env`. The optional `OPENAI_RECIPE_IMPORT_MODEL` variable selects the OpenAI model used for recipe extraction and defaults to `gpt-5-mini`.
+Run `npm run dev` and open [localhost:8080](http://localhost:8080). To enable AI import, set `OPENAI_API_KEY` in `.env`.
 
 ## Commands
 
@@ -121,11 +121,11 @@ Runs ESLint across the repository.
 The repository includes [.env.example](.env.example):
 
 ```env
-OPENAI_API_KEY=your_openai_api_key
+OPENAI_API_KEY=
 OPENAI_RECIPE_IMPORT_MODEL=gpt-5-mini
 ```
 
-`OPENAI_API_KEY` is read only on the server-side import path. The browser never calls OpenAI directly.
+The server reads `OPENAI_API_KEY` for AI import. Quick Parse and URL imports that find usable JSON-LD work without a key. `OPENAI_RECIPE_IMPORT_MODEL` is optional and defaults to `gpt-5-mini`.
 
 ## Import flow
 
@@ -141,13 +141,13 @@ The server import contract is:
 Request body:
 
 ```json
-{ "mode": "text", "text": "..." }
+{ "mode": "text", "text": "Simple Flatbread\n250 g flour\n150 g water\n5 g salt\nMix the ingredients. Rest for 30 minutes, then roll out and cook in a hot pan." }
 ```
 
 or
 
 ```json
-{ "mode": "url", "url": "https://example.com/recipe" }
+{ "mode": "url", "url": "https://www.kingarthurbaking.com/recipes/the-easiest-loaf-of-bread-youll-ever-bake-recipe" }
 ```
 
 Response body:
@@ -173,7 +173,7 @@ Import precedence:
 2. for URL imports, fetch the recipe page server-side
 3. extract `schema.org/Recipe` JSON-LD when available
 4. fall back to AI extraction with a schema-constrained response
-5. fall back to quick local parse when AI extraction is unavailable or unusable
+5. try quick parse after a recoverable AI extraction error
 6. present the normalized draft for editing and save it locally
 
 ### Tuning the AI import prompt
