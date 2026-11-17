@@ -259,3 +259,7 @@ Dough Planner Plus is a focused bread-planning application:
 - no cloud sync
 
 The primary workflow is local recipe planning, with a server-side import boundary for AI-assisted recipe structuring.
+
+## Support
+
+If Dough Planner Plus helps you plan your bakes, you can support its development on [Patreon](https://patreon.com/rupertgermann) or [Buy Me a Coffee](https://buymeacoffee.com/rupertgermann).
