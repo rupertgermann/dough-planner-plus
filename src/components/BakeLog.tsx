@@ -279,6 +279,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                       <Button
                         key={opt}
                         type="button"
+                        aria-pressed={crustColor === opt}
                         variant={crustColor === opt ? "ghost-neon" : "outline"}
                         size="sm"
                         className={
@@ -311,6 +312,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                       />
                       <button
                         type="button"
+                        aria-label={`Remove photo ${i + 1}`}
                         onClick={() => removePhoto(i)}
                         className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover/photo:opacity-100 transition-opacity"
                       >
@@ -418,6 +420,7 @@ export function BakeLog({ recipe, onUpdated }: BakeLogProps) {
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label="Delete bake entry"
                         className="h-7 w-7 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base print:hidden"
                       >
                         <Trash2 className="h-3.5 w-3.5" />

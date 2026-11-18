@@ -429,6 +429,7 @@ const ImportRecipe = () => {
                     />
                     <Button
                       type="button"
+                      aria-label={ingredient.name ? `Remove ingredient ${ingredient.name}` : "Remove unnamed ingredient"}
                       variant="ghost"
                       size="icon"
                       onClick={() =>
@@ -509,6 +510,7 @@ const ImportRecipe = () => {
                       />
                       <Button
                         type="button"
+                        aria-label={step.name ? `Remove step ${step.name}` : "Remove unnamed step"}
                         variant="ghost"
                         size="icon"
                         onClick={() =>

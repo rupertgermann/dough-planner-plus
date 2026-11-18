@@ -98,6 +98,7 @@ const SortableStep = ({
         </div>
 
         <Button
+          aria-label={step.name ? `Remove step ${step.name}` : "Remove unnamed step"}
           variant="ghost"
           size="icon"
           className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
