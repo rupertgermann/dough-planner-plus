@@ -369,6 +369,7 @@ const RecipeEditor = () => {
                   className="flex-1 border-brass/15 bg-background/40 focus-visible:ring-neon/40"
                 />
                 <Button
+                  aria-label={ing.name ? `Remove ingredient ${ing.name}` : "Remove unnamed ingredient"}
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-base"
