@@ -1,57 +1,70 @@
-import { cleanImportSourceText } from "../../src/lib/import/normalize-import";
+import { SAXParser } from "parse5-sax-parser";
 
-const ENTITY_MAP: Record<string, string> = {
-  "&nbsp;": " ",
-  "&amp;": "&",
-  "&quot;": "\"",
-  "&#39;": "'",
-  "&apos;": "'",
-  "&lt;": "<",
-  "&gt;": ">",
-  "&deg;": "°",
-};
+const IGNORED_TAGS = new Set(["script", "style", "noscript", "svg"]);
+const LINE_BREAK_TAGS = new Set(["p", "div", "section", "article", "li", "ul", "ol", "h1", "h2", "h3", "h4", "h5", "h6"]);
 
-function decodeHtmlEntities(text: string): string {
-  return text.replace(/&nbsp;|&amp;|&quot;|&#39;|&apos;|&lt;|&gt;|&deg;/g, (entity) => ENTITY_MAP[entity] ?? entity);
-}
-
-function extractTagContent(html: string, pattern: RegExp): string {
-  const match = html.match(pattern);
-  return match?.[1]?.trim() ?? "";
+function normalizeWhitespace(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
 }
 
 export function htmlToRecipeText(html: string, sourceUrl?: string): string {
-  const title = extractTagContent(html, /<title[^>]*>([\s\S]*?)<\/title>/i);
-  const metaDescription = extractTagContent(
-    html,
-    /<meta[^>]+name=["']description["'][^>]+content=["']([\s\S]*?)["'][^>]*>/i,
-  );
+  const parser = new SAXParser();
+  const body: string[] = [];
+  let title = "";
+  let readingTitle = false;
+  let description: string | undefined;
+  let ignoredTag = "";
+  let ignoredDepth = 0;
 
-  const bodyText = decodeHtmlEntities(
-    html
-      .replace(/<script[\s\S]*?<\/script>/gi, "\n")
-      .replace(/<style[\s\S]*?<\/style>/gi, "\n")
-      .replace(/<noscript[\s\S]*?<\/noscript>/gi, "\n")
-      .replace(/<svg[\s\S]*?<\/svg>/gi, "\n")
-      .replace(/<(br|\/p|\/div|\/section|\/article|\/li|\/ul|\/ol|\/h[1-6])[^>]*>/gi, "\n")
-      .replace(/<[^>]+>/g, " "),
-  );
+  parser.on("startTag", ({ tagName, attrs, selfClosing }) => {
+    if (ignoredDepth > 0) {
+      if (tagName === ignoredTag && !selfClosing) ignoredDepth++;
+      return;
+    }
+    if (IGNORED_TAGS.has(tagName)) {
+      if (tagName !== "svg" || !selfClosing) {
+        ignoredTag = tagName;
+        ignoredDepth = 1;
+      }
+      body.push("\n");
+      return;
+    }
+    if (tagName === "title" && !title) readingTitle = true;
+    if (tagName === "meta" && description === undefined &&
+        attrs.find(({ name }) => name === "name")?.value.toLowerCase() === "description") {
+      description = normalizeWhitespace(attrs.find(({ name }) => name === "content")?.value ?? "");
+    }
+    body.push(tagName === "br" ? "\n" : " ");
+  });
+  parser.on("endTag", ({ tagName }) => {
+    if (ignoredDepth > 0) {
+      if (tagName === ignoredTag) ignoredDepth--;
+      return;
+    }
+    if (tagName === "title") readingTitle = false;
+    body.push(LINE_BREAK_TAGS.has(tagName) ? "\n" : " ");
+  });
+  parser.on("text", ({ text }) => {
+    if (ignoredDepth > 0) return;
+    if (readingTitle) title += text;
+    body.push(text);
+  });
+  parser.end(html);
 
-  const lines = bodyText
+  const lines = body.join("")
     .split("\n")
-    .map((line) => line.replace(/\s+/g, " ").trim())
+    .map(normalizeWhitespace)
     .filter(Boolean)
     .slice(0, 250);
 
-  const assembled = [
-    title ? `Title: ${decodeHtmlEntities(title)}` : "",
-    metaDescription ? `Description: ${decodeHtmlEntities(metaDescription)}` : "",
+  const normalizedTitle = normalizeWhitespace(title);
+  return [
+    normalizedTitle ? `Title: ${normalizedTitle}` : "",
+    description ? `Description: ${description}` : "",
     sourceUrl ? `Source URL: ${sourceUrl}` : "",
-    "",
     ...lines,
   ]
     .filter(Boolean)
-    .join("\n");
-
-  return cleanImportSourceText(assembled).slice(0, 16_000);
+    .join("\n")
+    .slice(0, 16_000);
 }

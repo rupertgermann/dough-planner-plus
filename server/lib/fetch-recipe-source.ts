@@ -15,6 +15,9 @@ export interface FetchedRecipeSource {
 
 const FETCH_TIMEOUT_MS = 12_000;
 const MAX_REDIRECTS = 5;
+const MAX_SOURCE_BYTES = 2 * 1024 * 1024;
+const DECOMPRESSION_OPTIONS = { maxOutputLength: MAX_SOURCE_BYTES };
+const SOURCE_TOO_LARGE = "Recipe page is too large to import.";
 
 export async function fetchRecipeSource(url: string): Promise<FetchedRecipeSource> {
   const signal = AbortSignal.timeout(FETCH_TIMEOUT_MS);
@@ -59,13 +62,19 @@ export async function fetchRecipeSource(url: string): Promise<FetchedRecipeSourc
         throw new RecipeImportError(`Recipe page request failed with status ${status}.`, 502);
       }
       const chunks: Buffer[] = [];
-      for await (const chunk of response) chunks.push(Buffer.from(chunk));
-      let body: Buffer = Buffer.concat(chunks);
+      let sourceBytes = 0;
+      for await (const chunk of response) {
+        const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+        sourceBytes += buffer.length;
+        if (sourceBytes > MAX_SOURCE_BYTES) throw new RecipeImportError(SOURCE_TOO_LARGE, 422);
+        chunks.push(buffer);
+      }
+      let body: Buffer = Buffer.concat(chunks, sourceBytes);
       for (const encoding of (response.headers["content-encoding"] ?? "identity").split(",").reverse()) {
         switch (encoding.trim().toLowerCase()) {
-          case "gzip": body = await promisify(gunzip)(body); break;
-          case "deflate": body = await promisify(inflate)(body); break;
-          case "br": body = await promisify(brotliDecompress)(body); break;
+          case "gzip": body = await promisify(gunzip)(body, DECOMPRESSION_OPTIONS); break;
+          case "deflate": body = await promisify(inflate)(body, DECOMPRESSION_OPTIONS); break;
+          case "br": body = await promisify(brotliDecompress)(body, DECOMPRESSION_OPTIONS); break;
           case "identity": break;
           default: throw new RecipeImportError("The recipe page used an unsupported content encoding.", 502);
         }
@@ -76,6 +85,9 @@ export async function fetchRecipeSource(url: string): Promise<FetchedRecipeSourc
     }
   } catch (error) {
     if (error instanceof RecipeImportError) throw error;
+    if (error instanceof Error && "code" in error && error.code === "ERR_BUFFER_TOO_LARGE") {
+      throw new RecipeImportError(SOURCE_TOO_LARGE, 422);
+    }
     throw new RecipeImportError("Could not reach that URL.", 502);
   }
 }

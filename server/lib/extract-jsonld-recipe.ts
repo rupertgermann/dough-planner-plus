@@ -1,3 +1,4 @@
+import { SAXParser } from "parse5-sax-parser";
 import { ImportedRecipeDraft } from "../../src/lib/import/import-schema";
 import { normalizeImportedRecipeDraft } from "../../src/lib/import/normalize-import";
 
@@ -164,9 +165,23 @@ function extractSteps(value: unknown): Array<{
 }
 
 export function extractJsonLdRecipe(html: string): ImportedRecipeDraft | null {
-  const blocks = Array.from(
-    html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi),
-  ).map((match) => match[1]?.trim()).filter(Boolean) as string[];
+  const blocks: string[] = [];
+  const parser = new SAXParser();
+  let script: string[] | undefined;
+  parser.on("startTag", ({ tagName, attrs }) => {
+    if (tagName === "script" &&
+        attrs.some(({ name, value }) => name === "type" && value.trim().toLowerCase() === "application/ld+json")) {
+      script = [];
+    }
+  });
+  parser.on("text", ({ text }) => script?.push(text));
+  parser.on("endTag", ({ tagName }) => {
+    if (tagName === "script" && script) {
+      blocks.push(script.join(""));
+      script = undefined;
+    }
+  });
+  parser.end(html);
 
   for (const block of blocks) {
     let parsed: unknown;
