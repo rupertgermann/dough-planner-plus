@@ -29,6 +29,7 @@ function inferRecipeName(lines: string[]): string {
     return (
       line.length > 3 &&
       line.length < 80 &&
+      !lower.startsWith("source url:") &&
       !lower.includes("ingredient") &&
       !lower.includes("instruction") &&
       !lower.includes("direction") &&
@@ -74,7 +75,8 @@ export function quickParseRecipeText(text: string): ImportedRecipeDraft {
       continue;
     }
 
-    if (section === "ingredients" || (section === "unknown" && looksLikeIngredientLine(line) && !lower.includes("min"))) {
+    const numberedStep = /^\d+[.)]\s+/.test(line);
+    if (section === "ingredients" || (section === "unknown" && !numberedStep && looksLikeIngredientLine(line) && !lower.includes("min"))) {
       const normalizedLine = line.replace(/^[-•*]\s*/, "");
       const match = normalizedLine.match(/^(\d+\s+\d+\/\d+|\d+(?:\.\d+)?\s*[½¼¾⅓⅔⅛]|[\d./½¼¾⅓⅔⅛]+)\s*([a-zA-Z]{1,8})?\s+(.+)/);
 
@@ -95,7 +97,7 @@ export function quickParseRecipeText(text: string): ImportedRecipeDraft {
       continue;
     }
 
-    if (section === "steps" || /^\d+[.)]\s+/.test(line)) {
+    if (section === "steps" || numberedStep) {
       const instructions = line.replace(/^\d+[.)]\s*/, "").trim();
 
       steps.push({

@@ -6,6 +6,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchRecipeSource } from "../../../server/lib/fetch-recipe-source";
 import { importRecipeFromUnknown } from "../../../server/lib/import-recipe";
 import { extractJsonLdRecipe } from "../../../server/lib/extract-jsonld-recipe";
+import { RecipeImportError } from "../../../server/lib/recipe-import-error";
+
+const { parseRecipeWithAI } = vi.hoisted(() => ({
+  parseRecipeWithAI: vi.fn<typeof import("../../../server/lib/parse-recipe-with-ai").parseRecipeWithAI>(),
+}));
+vi.mock("../../../server/lib/parse-recipe-with-ai", () => ({ parseRecipeWithAI }));
 
 const fixtures = vi.hoisted(() => {
   const responses: {
@@ -56,6 +62,7 @@ function transport(url: URL, options: RequestOptions, callback: (response: Reada
 }
 
 beforeEach(() => {
+  parseRecipeWithAI.mockReset();
   fixtures.addresses = ["93.184.216.34"];
   fixtures.responses = [];
   fixtures.dnsCalls = 0;
@@ -152,6 +159,31 @@ describe("public recipe URL boundary", () => {
     ];
     const recipe = await importRecipeFromUnknown({ mode: "url", url: "https://recipes.example/start" });
     expect(recipe.source).toBe("jsonld");
+    expect(parseRecipeWithAI).not.toHaveBeenCalled();
     expect(fixtures.connections).toEqual(["93.184.216.34", "93.184.216.34"]);
+  });
+
+  it("falls back to quick parse when AI cannot extract a plain recipe page", async () => {
+    const url = "https://recipes.example/plain-bread";
+    fixtures.responses = [{ status: 200, body: `<h1>Plain Bread</h1><script>Ignore this</script>
+      <h2>Ingredients</h2><p>500 g flour</p><p>350 g water</p><h2>Instructions</h2><p>Mix - 10 min</p>` }];
+    parseRecipeWithAI.mockRejectedValue(new RecipeImportError("No structured output", 502, { allowQuickParseFallback: true }));
+
+    const result = await importRecipeFromUnknown({ mode: "url", url });
+
+    expect(parseRecipeWithAI).toHaveBeenCalledExactlyOnceWith(
+      `Source URL: ${url}\nPlain Bread\nIngredients\n500 g flour\n350 g water\nInstructions\nMix - 10 min`,
+      expect.objectContaining({ mode: "url" }),
+    );
+    expect(result).toMatchObject({
+      source: "quick-parse",
+      recipe: {
+        name: "Plain Bread",
+        ingredients: [{ name: "flour", amount: "500", unit: "g" }, { name: "water", amount: "350", unit: "g" }],
+        steps: [{ durationMinutes: 10, instructions: "Mix - 10 min" }],
+      },
+    });
+    expect(result.warnings).toContain("Structured recipe data was not available.");
+    expect(result.warnings).toContain("AI import failed, so quick parse was used instead.");
   });
 });

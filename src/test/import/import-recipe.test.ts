@@ -47,3 +47,14 @@ describe("importRecipe fallback policy", () => {
     });
   });
 });
+
+it.each([
+  [new RecipeImportError("Source unavailable", 422), 422, "Source unavailable"],
+  [new RecipeImportError("Could not import this source"), 500, "Could not import this source"],
+  [new Error("Upstream rejected the request"), 500, "Upstream rejected the request"],
+  [new Error(), 500, "Recipe import failed"],
+  ["No error details", 500, "Recipe import failed"],
+])("serializes %s for the import client", async (error, statusCode, message) => {
+  const { serializeRecipeImportError } = await import("../../../server/lib/import-recipe");
+  expect(serializeRecipeImportError(error)).toEqual({ statusCode, body: { error: message } });
+});
