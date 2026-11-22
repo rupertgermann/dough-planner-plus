@@ -118,8 +118,15 @@ it("shows the API error without saving a rejected recipe import", async () => {
   expect(getRecipes()).toEqual(library);
 });
 
-it("corrects a quick-parse draft and retains the corrections when saving fails", async () => {
-  const library = getRecipes();
+const quickParseText = "Kitchen loaf\nIngredients\n500 g flour\nInstructions\nMix for 10 min";
+
+function renderQuickParseDraft() {
+  render(<App />);
+  fireEvent.change(screen.getByRole("textbox"), { target: { value: quickParseText } });
+  fireEvent.click(screen.getByRole("button", { name: "Quick Parse" }));
+}
+
+it("validates pasted text and previews a quick-parse draft", async () => {
   render(<App />);
   const pastedText = screen.getByRole("textbox");
   const quickParse = screen.getByRole("button", { name: "Quick Parse" });
@@ -128,12 +135,15 @@ it("corrects a quick-parse draft and retains the corrections when saving fails",
   fireEvent.change(pastedText, { target: { value: "A note with no recipe" } });
   fireEvent.click(quickParse);
   expect(await screen.findByText("Quick parse could not find enough recipe structure.")).toBeVisible();
-  fireEvent.change(pastedText, { target: { value: "Kitchen loaf\nIngredients\n500 g flour\nInstructions\nMix for 10 min" } });
+  fireEvent.change(pastedText, { target: { value: quickParseText } });
   fireEvent.click(quickParse);
   expect(screen.getByText("Source: Quick Parse")).toBeVisible();
   expect(await screen.findByText("Quick parse complete. Review and save the draft.")).toBeVisible();
   expect(importFetch).not.toHaveBeenCalled();
+});
 
+it("edits recipe details and ingredient rows in a quick-parse draft", () => {
+  renderQuickParseDraft();
   fireEvent.change(screen.getByRole("textbox", { name: "Description" }), { target: { value: "A light loaf" } });
   fireEvent.change(screen.getByRole("textbox", { name: "Notes" }), { target: { value: "Proof in the tin" } });
   fireEvent.click(screen.getByText("Sweet", { exact: true }));
@@ -154,6 +164,15 @@ it("corrects a quick-parse draft and retains the corrections when saving fails",
   fireEvent.click(screen.getByRole("button", { name: "Remove unnamed ingredient" }));
   expect(screen.getByText("Ingredients (2)")).toBeVisible();
 
+  fireEvent.click(screen.getByRole("button", { name: "Save & Edit Recipe" }));
+  expect(getRecipes().at(-1)).toMatchObject({
+    name: "Kitchen loaf", description: "A light loaf", notes: "Proof in the tin", tags: ["Rye"],
+    ingredients: [{ name: "Rye flour", amount: "470", unit: "g" }, { name: "Water", amount: "340", unit: "ml" }],
+  });
+});
+
+it("edits step rows in a quick-parse draft", () => {
+  renderQuickParseDraft();
   fireEvent.click(screen.getByRole("button", { name: "Remove step Mix for 10 min" }));
   expect(screen.getByPlaceholderText("Step name")).toHaveValue("");
   const addStep = within(screen.getByText("Steps (1)").parentElement!).getByRole("button", { name: "Add" });
@@ -168,6 +187,17 @@ it("corrects a quick-parse draft and retains the corrections when saving fails",
   fireEvent.click(screen.getByRole("button", { name: "Remove unnamed step" }));
   expect(screen.getByText("Steps (2)")).toBeVisible();
 
+  fireEvent.click(screen.getByRole("button", { name: "Save & Edit Recipe" }));
+  expect(getRecipes().at(-1)?.steps).toMatchObject([
+    { name: "Mix", durationMinutes: 14, instructions: "Mix thoroughly" },
+    { name: "Bake", durationMinutes: 42, instructions: "Cool on a rack" },
+  ]);
+});
+
+it("retains a corrected quick-parse draft when saving fails", async () => {
+  const library = getRecipes();
+  renderQuickParseDraft();
+  fireEvent.change(screen.getByRole("textbox", { name: "Recipe Name" }), { target: { value: "Corrected kitchen loaf" } });
   const save = screen.getByRole("button", { name: "Save & Edit Recipe" });
   const storage = vi.spyOn(Storage.prototype, "setItem").mockImplementationOnce(() => { throw new Error("Storage is full"); });
   try {
@@ -175,19 +205,14 @@ it("corrects a quick-parse draft and retains the corrections when saving fails",
     expect(await screen.findByText("Storage is full")).toBeVisible();
     expect(window.location.pathname).toBe("/import");
     expect(getRecipes()).toEqual(library);
+    expect(screen.getByRole("textbox", { name: "Recipe Name" })).toHaveValue("Corrected kitchen loaf");
   } finally {
     storage.mockRestore();
   }
+
   fireEvent.click(save);
   expect(screen.getByRole("heading", { name: "Edit Recipe" })).toBeVisible();
-  expect(getRecipes().at(-1)).toMatchObject({
-    name: "Kitchen loaf", description: "A light loaf", notes: "Proof in the tin", tags: ["Rye"],
-    ingredients: [{ name: "Rye flour", amount: "470", unit: "g" }, { name: "Water", amount: "340", unit: "ml" }],
-    steps: [
-      { name: "Mix", durationMinutes: 14, instructions: "Mix thoroughly" },
-      { name: "Bake", durationMinutes: 42, instructions: "Cool on a rack" },
-    ],
-  });
+  expect(getRecipes().at(-1)?.name).toBe("Corrected kitchen loaf");
 });
 
 it("shows progress and then a JSON-LD preview when importing a URL", async () => {
