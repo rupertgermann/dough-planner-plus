@@ -7,14 +7,16 @@ import { fetchRecipeSource } from "../../../server/lib/fetch-recipe-source";
 import { importRecipeFromUnknown } from "../../../server/lib/import-recipe";
 import { extractJsonLdRecipe } from "../../../server/lib/extract-jsonld-recipe";
 
-const fixtures = vi.hoisted(() => ({
-  addresses: ["93.184.216.34"],
-  dnsCalls: 0,
-  rebind: false,
-  hang: false,
-  responses: [] as { status: number; location?: string; body?: string | Buffer; encoding?: string }[],
-  connections: [] as string[],
-}));
+const fixtures = vi.hoisted(() => {
+  const responses: {
+    status: number;
+    location?: string;
+    body?: string | Buffer | Buffer[];
+    encoding?: string;
+  }[] = [];
+  const connections: string[] = [];
+  return { addresses: ["93.184.216.34"], dnsCalls: 0, rebind: false, hang: false, responses, connections };
+});
 vi.mock("node:dns", async original => {
   const actual = await original<typeof import("node:dns")>();
   const lookup = (_host: string, _options: unknown, callback: (error: null, addresses: { address: string; family: number }[]) => void) => {
@@ -42,7 +44,8 @@ function transport(url: URL, options: RequestOptions, callback: (response: Reada
       if (error) return request.emit("error", error);
       fixtures.connections.push(String(address));
       const fixture = fixtures.responses.shift() ?? { status: 200, body: "Recipe" };
-      const response = Object.assign(Readable.from([fixture.body ?? ""]), {
+      const chunks = Array.isArray(fixture.body) ? fixture.body : [fixture.body ?? ""];
+      const response = Object.assign(Readable.from(chunks), {
         statusCode: fixture.status,
         headers: { location: fixture.location, "content-type": "text/html", "content-encoding": fixture.encoding },
       });
@@ -62,10 +65,10 @@ beforeEach(() => {
   fixtures.connections = [];
 });
 
+const compressionMethods = [["gzip", gzipSync], ["deflate", deflateSync], ["br", brotliCompressSync]] as const;
+
 describe("public recipe URL boundary", () => {
-  it.each([
-    ["gzip", gzipSync], ["deflate", deflateSync], ["br", brotliCompressSync],
-  ] as const)("decodes %s HTML before extracting JSON-LD", async (encoding, compress) => {
+  it.each(compressionMethods)("decodes %s HTML before extracting JSON-LD", async (encoding, compress) => {
     const html = '<script type="application/ld+json">{"@type":"Recipe","name":"Crusty café loaf","recipeIngredient":["500 g flour"],"recipeInstructions":["Mix - 10 min"]}</script>';
     fixtures.responses = [{ status: 200, encoding, body: compress(Buffer.from(html)) }];
     const result = await fetchRecipeSource("https://recipes.example/bread");
@@ -76,6 +79,31 @@ describe("public recipe URL boundary", () => {
   it.each(["gzip", "unsupported"])("returns a controlled error for an unreadable %s response", async (encoding) => {
     fixtures.responses = [{ status: 200, encoding, body: "not compressed HTML" }];
     await expect(fetchRecipeSource("https://recipes.example/bread")).rejects.toMatchObject({ statusCode: 502 });
+  });
+
+  it("accepts a recipe page at the download limit", async () => {
+    const body = Buffer.alloc(2 * 1024 * 1024, " ");
+    body.write("Recipe");
+    fixtures.responses = [{ status: 200, body }];
+
+    const result = await fetchRecipeSource("https://recipes.example/bread");
+    expect(result.html.trim()).toBe("Recipe");
+  });
+
+  it("limits downloaded recipe pages across chunks", async () => {
+    const chunk = Buffer.alloc(1024 * 1024 + 1, " ");
+    fixtures.responses = [{ status: 200, body: [chunk, chunk] }];
+
+    await expect(fetchRecipeSource("https://recipes.example/bread"))
+      .rejects.toMatchObject({ statusCode: 422, message: "Recipe page is too large to import." });
+  });
+
+  it.each(compressionMethods)("limits the decoded size of %s recipe pages", async (encoding, compress) => {
+    const body = compress(Buffer.alloc(2 * 1024 * 1024 + 1, " "));
+    fixtures.responses = [{ status: 200, encoding, body }];
+
+    await expect(fetchRecipeSource("https://recipes.example/bread"))
+      .rejects.toMatchObject({ statusCode: 422, message: "Recipe page is too large to import." });
   });
 
   it.each([

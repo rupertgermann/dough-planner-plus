@@ -20,6 +20,7 @@ describe("extractJsonLdRecipe", () => {
     const html = `
       <html>
         <head>
+          <!-- <script type="application/ld+json">{"@type":"Recipe","name":"Commented recipe","recipeIngredient":["500 g flour"],"recipeInstructions":["Mix"]}</script> -->
           <script type="application/ld+json">
             {
               "@context": "https://schema.org",
